@@ -1,3 +1,8 @@
-## [0.0.1] - TODO: Add release date.
+## [0.0.1] - 18 December 2020
 
-* TODO: Describe initial release.
+This release contains the main widgets below and several helper widgets.
+1. Edit Plus Data Table
+2. Edit Plus Quick Forms
+3. Edit Plus Date Input Text Form Field
+
+
