@@ -1,4 +1,4 @@
-import 'package:edit_plus/widgets/editplus_quickform.dart';
+import 'package:edit_plus/edit_plus.dart';
 import 'package:flutter/material.dart';
 
 

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+part of edit_plus;
 
 class EditPlusStringDropdown extends StatefulWidget {
   final List<dynamic> valuesList;
