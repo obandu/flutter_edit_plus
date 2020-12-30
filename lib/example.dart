@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget
     var textFieldDATE = EditPlusFormWidget(widgettype:'DATETEXTFIELD', label:'DATE OF BIRTH', savekey:'DOB', validationfunction:  simpleValidationFunction); 
     widgetDescList.add(textFieldDATE);  
 
-    return EditplusQuickform(widgetDescList:widgetDescList, savedValuesMap:saveFormData, formKey:saveFormKey, spacing : 20);
+    return EditplusQuickform(widgetDescList:widgetDescList, dataContainer:saveFormData, formKey:saveFormKey, spacing : 20);
   }
 
   // this particular button bar has a button that saves the form content

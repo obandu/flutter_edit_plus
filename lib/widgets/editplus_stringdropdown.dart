@@ -2,18 +2,20 @@ part of edit_plus;
 
 class EditPlusStringDropdown extends StatefulWidget {
   final List<dynamic> valuesList;
-  final Map<String, dynamic> valueContainer;
+  final valueContainer = new Map<String, dynamic>();
   final String hinttext;
-  final String validationHint;
-  final Map<String, dynamic> saveDataMap;
+  final Function validationFunction;
+  final Function onSaveFunction;
+  final Map<String, dynamic> formDataContainer;
   final String saveDataKey;
 
   EditPlusStringDropdown(
       {this.valuesList,
-      this.valueContainer,
+      // this.valueContainer,
       this.hinttext,
-      this.validationHint,
-      this.saveDataMap,
+      this.validationFunction,
+      this.onSaveFunction,
+      this.formDataContainer,
       this.saveDataKey});
 
   @override
@@ -25,7 +27,7 @@ class EditPlusStringDropdown extends StatefulWidget {
     valueContainer['VALUE'] = value;
   }
 
-  get values => valueContainer;
+  get values => valueContainer; 
 }
 
 class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
@@ -42,14 +44,7 @@ class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
             widget.setSelectedValue(_value);
           });
         },
-        validator: (value) {
-          if (value == null) {
-            return widget.validationHint;
-          }
-
-          // print("String drop down value at validation " + value.toString());
-          return null;
-        },
+        validator: widget.validationFunction,
         items: widget.valuesList.map<DropdownMenuItem>((value) {
           return DropdownMenuItem(
             value: value,
@@ -64,7 +59,7 @@ class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
         ),
         value: _value,
         onSaved: (savevalue) {
-          widget.saveDataMap[widget.saveDataKey] = savevalue;
+          widget.onSaveFunction(widget.saveDataKey, savevalue);
         });
   }
 }

@@ -1,18 +1,10 @@
-# edit_plus
+# The edit_plus flutter package
 
-A flutter library package containing material widgets enhanced for convenient use in forms or input pages. The widgets can be used with both Stateless and Stateful (forms) widgets and include:
+A flutter package containing material widgets enhanced or composited for convenient use in forms or input pages. The widgets can be used with both Stateless and Stateful (forms) widgets and include.
 
-1. Data Table - connected to a bloc and works in both read only or read write modes. It comes with the ability to create new rows and save data directly to a data source over REST API. Can also be easily engineered to work with firebase firestore. It is connected to a specific bloc which is part of the library.
-2. Date Entry Text Form - TextFormField from the material library modified to allow easy date entry with a date picker.
-Allows for form validation.
+1. EditPlusDataTable - Data table that can be used in read only or read-write mode to display table content from various sources. Currently only from REST data sources. It uses a specific BLOC [flutter_bloc package] to create and save rows - essentially create and maintain its state. It can therefore be engineered to work with data on file systems or firebase firestore databases. 
+2. EditPlusDateInputFormField - TextFormField from the material library composited with a date picker for easy date entry in form fields. It supports form validation. It has initial date as current date, first date as 1900 and last date as 2099
+3. EditplusQuickform - A class that quickly composes forms based on input widgets of named types and default values. It can generate input widgets from composition or take in standard input form widgets. Data is collected into a map object with key-value pairs representing each input widget.
+4. EditPlusFormWidget - A widget that defines input form widgets. 
 
-## Getting Started
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.

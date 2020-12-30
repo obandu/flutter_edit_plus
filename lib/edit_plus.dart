@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 part 'data/editplus_table_bloc.dart';
 part 'widgets/editplus_datatable.dart';
 part 'widgets/editplus_quickform.dart';
-part 'widgets/editplus_textformfield_datepicker.dart';
+part 'widgets/editplus_dateinput_formfield.dart';
 part 'widgets/editplus_stringdropdown.dart';
 part 'widgets/tablerow_radiobutton.dart';
 part 'widgets/tablerow_checkbox.dart';
