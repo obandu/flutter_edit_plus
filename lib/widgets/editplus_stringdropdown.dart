@@ -3,19 +3,17 @@ part of edit_plus;
 class EditPlusStringDropdown extends StatefulWidget {
   final List<dynamic> valuesList;
   final valueContainer = new Map<String, dynamic>();
-  final String hinttext;
+  final String hintText;
   final Function validationFunction;
   final Function onSaveFunction;
-  final Map<String, dynamic> formDataContainer;
   final String saveDataKey;
 
   EditPlusStringDropdown(
       {this.valuesList,
       // this.valueContainer,
-      this.hinttext,
+      this.hintText,
       this.validationFunction,
       this.onSaveFunction,
-      this.formDataContainer,
       this.saveDataKey});
 
   @override
@@ -51,10 +49,10 @@ class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
             child: Text(value.toString()),
           );
         }).toList(),
-        hint: Text(widget.hinttext),
+        hint: Text(widget.hintText),
         decoration: InputDecoration(
           // hintText: "SUBSCRIPTION NAME",
-          hintStyle: TextStyle(color: Colors.blueAccent),
+          // hintStyle: TextStyle(color: Colors.blueAccent),
           border: OutlineInputBorder(),
         ),
         value: _value,

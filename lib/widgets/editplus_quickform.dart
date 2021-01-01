@@ -76,7 +76,22 @@ class EditplusQuickform extends StatelessWidget
           widgetList.add(tfwidget);
           widgetList.add(SizedBox(height: spacing,));
           continue;
-        }        
+        }    
+        if (entry.widgettype == 'DROPDOWNLIST')
+        {
+          var tfwidget = EditPlusStringDropdown(
+              valuesList: entry.otherData,
+              validationFunction: entry.validationfunction,
+              hintText: entry.label,
+              saveDataKey: entry.savekey,
+              onSaveFunction: onSavedFunction,
+              // formDataContainer: dataContainer,
+            );
+
+          widgetList.add(tfwidget);
+          widgetList.add(SizedBox(height: spacing,));
+          continue;
+        }    
       }
       if (entry is Widget)
       {

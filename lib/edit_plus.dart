@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 part 'data/editplus_table_bloc.dart';
+part 'data/editplus_utils.dart';
 part 'widgets/editplus_datatable.dart';
 part 'widgets/editplus_quickform.dart';
 part 'widgets/editplus_dateinput_formfield.dart';
