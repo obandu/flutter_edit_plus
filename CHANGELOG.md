@@ -16,3 +16,8 @@ This release ensures direct access of the widgets by only inherting edit_plus da
 ## [0.0.3] - 30 December 2020
 
 1. QuickForm widget list can now have standard material widgets and also EditPlusFormWidgets which allows for maximum customisation.
+
+## [0.0.4] - 01 January 2021
+
+1. Changes to design of the EditPlusTableBloc and separation of JSON processing into the EditPlusUtils class.
+2. Direct REST connection removed from BLOC, now to be handled within the end-user applications.
