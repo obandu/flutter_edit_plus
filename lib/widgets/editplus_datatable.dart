@@ -259,16 +259,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
           // cannot refresh if in editing mode
           if (creatingRow == false && editingRow == false) 
           {
-            /*
-            if (widget.persistenceData != null)
-            {
-              Map<String, dynamic> editPlusTableEventMap = Map<String, dynamic>();
-              editPlusTableEventMap['EVENTNAME'] = 'REFRESHTABLEEVENT';
-              BlocProvider.of<EditPlusTableBloc>(context).add(editPlusTableEventMap);
-            } */
-
-            // call the refresh table function
-            widget.refreshTableFunction();
+            widget.refreshTableFunction(BlocProvider.of<EditPlusTableBloc>(context));
           }
           else
           {
@@ -389,7 +380,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
               BlocProvider.of<EditPlusTableBloc>(context)
                             .add(editPlusTableEventMap);
 
-              // widget.saveTableFunction(savedata);
+              widget.saveTableFunction(savedata);
               // print("data to save is $savedata");
             }
           },

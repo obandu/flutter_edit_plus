@@ -21,3 +21,7 @@ This release ensures direct access of the widgets by only inherting edit_plus da
 
 1. Changes to design of the EditPlusTableBloc and separation of JSON processing into the EditPlusUtils class.
 2. Direct REST connection removed from BLOC, now to be handled within the end-user applications.
+
+## [0.0.5] - 04 January 2021
+
+1. Added the ability to refresh table from REST source. REST source must have list of JSON items with matching tableName values. Excess values will not be picked.
