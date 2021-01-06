@@ -9,10 +9,11 @@ class EditPlusTableBloc extends Bloc<Map<String, dynamic>, Map<String, dynamic>>
 {
   EditPlusTableBloc():super(new Map<String, dynamic>());  
 
-  var _emptyDataRows = List<Map<String, dynamic>>();
+  
 
   getEmptyState() {
     var emptyState = Map<String, dynamic>();
+    List<Map<String, dynamic>> _emptyDataRows = [];
     emptyState['DATAROWS'] = _emptyDataRows;
     return emptyState;
   }
@@ -30,10 +31,9 @@ class EditPlusTableBloc extends Bloc<Map<String, dynamic>, Map<String, dynamic>>
         break;
       case EditPlusBlocEvent.REFRESHTABLEEVENT:
         var newState = getEmptyState();
-        newState.addAll(state);
-        List<Map<String, dynamic>> dataRows = newState['DATAROWS'];
-        dataRows.addAll(EditPlusUtils.dataRowsFromJSON(eventMap['EVENTDATA'], eventMap['COLUMNNAMES']));
-        newState['DATAROWS'] = dataRows;
+        // List<Map<String, dynamic>> dataRows = newState['DATAROWS'];
+        newState['DATAROWS'].addAll(EditPlusUtils.dataRowsFromJSON(eventMap['EVENTDATA'], eventMap['COLUMNNAMES']));
+        // newState['DATAROWS'] = dataRows;
         yield newState;
         break;        
       case EditPlusBlocEvent.SAVEROWEVENT:

@@ -25,3 +25,8 @@ This release ensures direct access of the widgets by only inherting edit_plus da
 ## [0.0.5] - 04 January 2021
 
 1. Added the ability to refresh table from REST source. REST source must have list of JSON items with matching tableName values. Excess values will not be picked.
+
+## [0.0.6] - 04 January 2021
+
+1. Null safety for the EditPlusTable.
+2. Improvements and bug fixes for EditPlusTable.

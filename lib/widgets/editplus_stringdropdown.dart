@@ -10,7 +10,6 @@ class EditPlusStringDropdown extends StatefulWidget {
 
   EditPlusStringDropdown(
       {this.valuesList,
-      // this.valueContainer,
       this.hintText,
       this.validationFunction,
       this.onSaveFunction,
@@ -51,8 +50,6 @@ class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
         }).toList(),
         hint: Text(widget.hintText),
         decoration: InputDecoration(
-          // hintText: "SUBSCRIPTION NAME",
-          // hintStyle: TextStyle(color: Colors.blueAccent),
           border: OutlineInputBorder(),
         ),
         value: _value,

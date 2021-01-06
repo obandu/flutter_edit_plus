@@ -4,47 +4,44 @@ class EditPlusDataTable extends StatefulWidget
 {
   final Text tableLabel;
   final List<String> columnNames;
-  final List <Map<String, dynamic>> dataRowsSource;
   final bool tableEditable;
-  final String multiSelect;
-  final Map fieldEditors;
-  final Function saveTableFunction;
-  final Function alertFunction;
+  final Map<String, Widget> fieldEditors;
   final Function refreshTableFunction;
 
   final tableEditStatus = new Map<String, dynamic>();
-  final dataRows = new List<DataRow>();
+  final List<DataRow> dataRows = [];
+  final List<DataCell> editDataCells = [];
+
+   // create a global keys
+  final fieldKeys = new Map<String, dynamic>();
+  // final _tableKey = GlobalKey<FormState>();
+
 
   EditPlusDataTable(
-    {this.tableLabel,
-     this.columnNames,
-     this.dataRowsSource,
-     this.tableEditable,
-     this.multiSelect,
-     this.fieldEditors,
-     this.saveTableFunction,
-     this.alertFunction,
-     this.refreshTableFunction}
+    {@required this.tableLabel,
+     @required this.columnNames,
+     @required this.tableEditable,
+     @required this.refreshTableFunction,
+     this.fieldEditors}
   );
 
   @override
   State<StatefulWidget> createState() 
   { 
-    // create Blank Data Row for edit
-    var editDataCells = List<DataCell>();
+    // create Blank Data Row for editing based on the field editors.
+    // var editDataCells = List<DataCell>();
     editDataCells.add(DataCell(Text(" ")));
     for (String columnName in columnNames)
     {
-      if (fieldEditors != null)
+      if (fieldEditors != null && fieldEditors.containsKey(columnName))
       {
-        if (fieldEditors.containsKey(columnName))
-        {
-          editDataCells.add(DataCell(fieldEditors[columnName]));
-          continue;
-        }
+        editDataCells.add(DataCell(fieldEditors[columnName]));
+        continue;
       }
-       
+      
+      fieldKeys[columnName] = GlobalKey<FormState>();  
       editDataCells.add(DataCell(getTextFormField(columnName)));
+
     }
     var newDataRow = DataRow(cells: editDataCells);
 
@@ -59,14 +56,15 @@ class EditPlusDataTable extends StatefulWidget
   {
     return TextFormField
     (
-      key: ValueKey(textName),
+      key: GlobalObjectKey<FormState>(textName),
+      autovalidateMode: AutovalidateMode.always,
       decoration: InputDecoration(
         hintText: textName,
         // hintStyle: TextStyle(color: Colors.blueAccent),
         border: OutlineInputBorder(),
       ),
       validator: (value) {
-        if (value.isEmpty) {
+        if (value == null || value.isEmpty) {
           return 'Please enter a $textName';
         }
         return null;
@@ -82,20 +80,15 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
   @override
   Widget build(BuildContext context) 
   {
-    // create a global key
-    final _tableKey = GlobalKey<FormState>();
-
-    // create the header
-    var tableHeader = widget.tableLabel;
 
     // make the column headings names widgets
-    var tableColumns = List<DataColumn>();
+    List<DataColumn> tableColumns = [];
 
     // Add selection column
     tableColumns.add(
         DataColumn(
             label: Text(
-              "  ",
+              " ",
               style: TextStyle(
                  fontSize: 16,
                  fontWeight: FontWeight.bold
@@ -104,6 +97,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
           ),
       );
 
+    // Add all other columns.
     for (String columnName in widget.columnNames)
     {
       tableColumns.add(
@@ -127,8 +121,8 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
         decoration: BoxDecoration(
           border: Border.all()
         ),
-        margin: new EdgeInsets.all(2.0),
-        padding: new EdgeInsets.all(2.0),
+        margin: new EdgeInsets.all(1.0),
+        padding: new EdgeInsets.all(1.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -164,23 +158,28 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
                           String action = editPlusTableBloc['NEWROWACTION'];
                           if (action == 'INSERTROW')
                           {
-                            if (widget.tableEditStatus.containsKey('EDITINGNEWROW'))
-                            widget.dataRows.add(widget.tableEditStatus['NEWBLANKROW']);
+                            if (getCreateState() == true) // widget.tableEditStatus.containsKey('EDITINGNEWROW') && widget.tableEditStatus['EDITINGNEWROW'] == true)
+                            {
+                              widget.dataRows.add(widget.tableEditStatus['NEWBLANKROW']);
+                            }
                           }
                           if (action == 'SAVEROW')
                           {
                             widget.dataRows.remove(widget.tableEditStatus['NEWBLANKROW']);
-                            widget.tableEditStatus['EDITINGNEWROW'] = false;
-                            widget.saveTableFunction(dataRowsList);
+                            widget.tableEditStatus['CREATINGROW'] = false;
+                            widget.tableEditStatus['EDITINGROW'] = false;
+                            blankEditRow();
+                            // widget.saveTableFunction(dataRowsList);
                           }
                         }
                         
                         return DataTable (
                           columns : tableColumns,
                           rows: widget.dataRows,
-                          dividerThickness: 2,
-                          horizontalMargin: 2,
+                          dividerThickness: 1,
+                          horizontalMargin: 1,
                           showCheckboxColumn: false,
+                          columnSpacing: 12.0,
                         );
                       },
                       listener: (context, state) {
@@ -204,7 +203,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
     widget.dataRows.clear();
     for (Map dataRowContent in dataRowsMapList)
     {
-      var dataCells = List<DataCell>();
+      List<DataCell> dataCells = [];
       var dataRow = DataRow(cells: dataCells);
       // print("ROW CONTENT BEFORE is ${dataRowContent} ");
       var dcheckBox = getSelectionWidget(dataRow);
@@ -216,7 +215,6 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
         dataCells.add(DataCell(Text(tvalue)));
       }
 
-      
       widget.dataRows.add(dataRow);
     }
 
@@ -227,14 +225,15 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
   {
     if (widget.tableEditable == true)
     {
-      if (widget.multiSelect == "SINGLE")
+      /*if (widget.multiSelect == "SINGLE")
       {
         return TableRowRadioButton(new Map<String, dynamic>(), dataRow);
       }
       else
       {
         return TableRowCheckBox(new Map<String, dynamic>(), dataRow);
-      } 
+      } */
+      return TableRowCheckBox(new Map<String, dynamic>(), dataRow);
     }
     else
     {  
@@ -243,12 +242,22 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
  
   }
 
+  bool getCreateState()
+  {
+    return widget.tableEditStatus['CREATINGROW'] == null ? false : widget.tableEditStatus['CREATINGROW'];
+  }
+
+  bool getEditState()
+  {
+    return widget.tableEditStatus['EDITINGROW'] == null ? false : widget.tableEditStatus['EDITINGROW'];
+  }
+
   List<Widget> getButtons()
   {
-    var buttonList = List<Widget>();
+    List<Widget> buttonList = [];
 
-    var creatingRow = widget.tableEditStatus['CREATINGROW'] == null ? false : widget.tableEditStatus['CREATINGROW'];
-    var editingRow = widget.tableEditStatus['EDITINGROW'] == null ? false : widget.tableEditStatus['EDITINGROW'];
+    // var creatingRow = widget.tableEditStatus['CREATINGROW'] == null ? false : widget.tableEditStatus['CREATINGROW'];
+    // var editingRow = widget.tableEditStatus['EDITINGROW'] == null ? false : widget.tableEditStatus['EDITINGROW'];
 
     // the refresh button
     buttonList.add(
@@ -257,7 +266,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
         onPressed: ()
         {
           // cannot refresh if in editing mode
-          if (creatingRow == false && editingRow == false) 
+          if (getCreateState() == false && getEditState() == false) 
           {
             widget.refreshTableFunction(BlocProvider.of<EditPlusTableBloc>(context));
           }
@@ -277,17 +286,13 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
           child: Icon(Icons.add),
           onPressed: ()
           {
-            if (editingRow == false) 
+            if (getCreateState() == false && getEditState() == false) 
             {
-              widget.tableEditStatus['EDITINGNEWROW'] = true;
+              widget.tableEditStatus['CREATINGROW'] = true;
               Map<String, dynamic> editPlusTableEventMap = Map<String, dynamic>();
               editPlusTableEventMap['EVENTNAME'] = EditPlusBlocEvent.NEWROWEVENT;
               BlocProvider.of<EditPlusTableBloc>(context)
                             .add(editPlusTableEventMap);
-            }
-            else
-            {
-            // print("That action EDITINGNEWROW is not known in ${widget.tableStatus}");
             }
           },
         )
@@ -351,7 +356,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
           child: Icon(Icons.save),
           onPressed: ()
           {
-            if (widget.tableEditStatus['EDITINGNEWROW'] == true) 
+            if (getCreateState() == true) 
             {    
               // collect data
               // print("Row data is ${widget.tableStatus['NEWBLANKROW'].cells}");
@@ -361,13 +366,17 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
                 if (dc.child is TextFormField)
                 {
                   TextFormField tff = dc.child;
-                  ValueKey valueKey = tff.key;
+                  
+                  GlobalObjectKey<FormState> valueKey = tff.key;
+                  // valueKey.currentState.validate();
+
                   TextEditingController tec = tff.controller;
                   String value = tec.value.text;
+                  if (value == null || value.isEmpty) {return; }
                   String valuekey = valueKey.value;
-                  // print("Cell data is $valuekey AND value is $value");
+                  print("Cell data is $valuekey AND value is $value");
                   savedata[valuekey] = value;
-                  tec.value = TextEditingValue.empty;
+                  // tec.value = TextEditingValue.empty;
                   continue;
                 }
               } 
@@ -380,7 +389,10 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
               BlocProvider.of<EditPlusTableBloc>(context)
                             .add(editPlusTableEventMap);
 
-              widget.saveTableFunction(savedata);
+              /*if (widget.saveTableFunction != null)
+              {
+                widget.saveTableFunction(savedata);
+              } */
               // print("data to save is $savedata");
             }
           },
@@ -389,6 +401,29 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
     }
 
     return buttonList;
+  }
+
+  void blankEditRow()
+  {
+    widget.editDataCells.clear();
+
+    widget.editDataCells.add(DataCell(Text(" ")));
+    for (String columnName in widget.columnNames)
+    {
+      if (widget.fieldEditors != null && widget.fieldEditors.containsKey(columnName))
+      {
+        widget.editDataCells.add(DataCell(widget.fieldEditors[columnName]));
+        continue;
+      }
+      
+      widget.fieldKeys[columnName] = GlobalKey<FormState>();  
+      widget.editDataCells.add(DataCell(widget.getTextFormField(columnName)));
+
+    }
+    var newDataRow = DataRow(cells: widget.editDataCells);
+
+    // create the table status to handle editing state
+    widget.tableEditStatus['NEWBLANKROW'] = newDataRow;
   }
   
 }

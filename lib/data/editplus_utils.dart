@@ -26,7 +26,7 @@ class EditPlusUtils
   static List<Map<String, dynamic>> dataRowsFromJSON(var jsonTableList, var tableColumnNames)
   {
     // CONVERT TO LIST OF MAPS holding the key value pairs
-    var tableDataRows = List<Map<String, dynamic>>();
+    List<Map<String, dynamic>> tableDataRows = [];
     
     for (Map jsonItem in jsonTableList)
     {
