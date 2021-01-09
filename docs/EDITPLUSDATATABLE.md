@@ -10,11 +10,11 @@ The EditPlusDataTable is a composite of a title (a text widget), a collection of
 
 The constructor is of the format below
 
-''dart
+```dart
   EditPlusDataTable(
     {@required Text tableLabel,                // table label
      @required List<String> columnNames,       // column names for the table, required by Material DataTable
      @required bool tableEditable,             // determine if this is a read only table or table with ability to add items
      @required Function refreshTableFunction,} // This function receives the BLOC in use by the table to end user calling application
   );
-''
+```
