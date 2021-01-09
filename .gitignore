@@ -75,3 +75,7 @@ build/
 
 # Because this is a library package, we also dont check in pubspec.lock
 pubspec.lock
+
+# Do not include the main and example dart files
+lib/example.dart
+lib/main.dart

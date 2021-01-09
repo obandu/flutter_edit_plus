@@ -147,11 +147,14 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
                         return true;
                       },
                       builder: (context, editPlusTableBloc) {
+                        
                         var dataRowsList = editPlusTableBloc['DATAROWS'];
                         if (dataRowsList != null)
                         {
                           getDataRows(dataRowsList);
                         }
+ 
+                        // print("Table bloc is $editPlusTableBloc and Rows $getCreateState() AND WIDGET:DATAROWS $widget.dataRows");
 
                         if (editPlusTableBloc.containsKey("NEWROWACTION") )
                         {
@@ -172,7 +175,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
                             // widget.saveTableFunction(dataRowsList);
                           }
                         }
-                        
+                        // print("Columns and rows $tableColumns  AND ROWS $widget.dataRows");
                         return DataTable (
                           columns : tableColumns,
                           rows: widget.dataRows,
@@ -272,7 +275,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
           }
           else
           {
-            print("That action REFRESH CANNOT be done on a table row while also editing mode ${widget.tableEditStatus['CREATINGROW']}  || ${widget.tableEditStatus['EDITINGROW']}");
+            // print("That action REFRESH CANNOT be done on a table row while also editing mode ${widget.tableEditStatus['CREATINGROW']}  || ${widget.tableEditStatus['EDITINGROW']}");
           }
         },
       )
@@ -374,7 +377,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
                   String value = tec.value.text;
                   if (value == null || value.isEmpty) {return; }
                   String valuekey = valueKey.value;
-                  print("Cell data is $valuekey AND value is $value");
+                  // print("Cell data is $valuekey AND value is $value");
                   savedata[valuekey] = value;
                   // tec.value = TextEditingValue.empty;
                   continue;
@@ -406,8 +409,8 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
   void blankEditRow()
   {
     widget.editDataCells.clear();
-
     widget.editDataCells.add(DataCell(Text(" ")));
+
     for (String columnName in widget.columnNames)
     {
       if (widget.fieldEditors != null && widget.fieldEditors.containsKey(columnName))

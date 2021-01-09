@@ -53,7 +53,7 @@ class HomeScreen extends StatelessWidget
   // The actual form
   Widget _testForm(var saveFormKey, var saveFormData)
   {
-    var widgetDescList = List<EditPlusFormWidget>();
+    List<EditPlusFormWidget> widgetDescList = [];
 
     var textFieldPIN = EditPlusFormWidget(widgettype:'TEXTFIELD', label:'-- PIN --',  savekey:'DEVPIN',  validationfunction:  simpleValidationFunction);
     widgetDescList.add(textFieldPIN);

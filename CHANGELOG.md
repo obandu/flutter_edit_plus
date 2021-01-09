@@ -30,3 +30,8 @@ This release ensures direct access of the widgets by only inherting edit_plus da
 
 1. Null safety for the EditPlusTable.
 2. Improvements and bug fixes for EditPlusTable.
+
+## [0.0.7] - 09 January 2021
+1. Bug fixes and performance improvements for EditPlusTable.
+2. Interface finalized for EditPlusTable. Constructor requires label, column names, refresh function and whether or not table is editable. 
+   Optionally, field editors from the edit_plus library are accepted for new row inputs.

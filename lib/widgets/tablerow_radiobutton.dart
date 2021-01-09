@@ -23,14 +23,14 @@ class _RowRadioButtonState extends State<TableRowRadioButton>
   @override
   Widget build(BuildContext context) {
     var rowsel = widget.rowState["SELECTED"];
-    print("ROWSELVALUE is $rowsel AND ROWSTATE ${widget.rowState}");
+    // print("ROWSELVALUE is $rowsel AND ROWSTATE ${widget.rowState}");
     if (rowsel == null) rowsel = false;
     return Radio(
       value: rowsel,
       groupValue: "MYTABLE",
       onChanged: (value)
       {
-        print("radio button Change value is $value");
+        // print("radio button Change value is $value");
         setState(()
         {
           widget.rowState["SELECTED"] = value;
