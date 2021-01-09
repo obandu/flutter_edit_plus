@@ -8,6 +8,27 @@ the table through its editing interface can be saved.
 
 The EditPlusDataTable is a composite of a title (a text widget), a collection of editing buttons, a collection of input fields (only material TextFormField as at version 0.0.6) and a Material DataTable. 
 
+## SAMPLE EDITABLE TABLE
+![Editable Table](editable_table.jpg)
+
+```dart
+EditPlusDataTable(columnNames: tableColumnNames, tableLabel : Text("SALES ITEMS"), tableEditable : true, refreshTableFunction: refreshTableFromREST)
+```
+
+## SAMPLE READ ONLY TABLE
+![Read Only Table](readonly_table.jpg)
+
+```dart
+EditPlusDataTable(columnNames: tableColumnNames, tableLabel : Text("SALES ITEMS"), tableEditable : false, refreshTableFunction: refreshTableFromREST)
+
+
+## RELATIONSHIP WITH BLOC
+
+## SAVING DATA TO BLOC AND BEYOND
+
+## REFRESHING DATA THROUGH END USER REFRESH FUNCTION
+
+## CODE FORMAT
 The constructor is of the format below
 
 ```dart
