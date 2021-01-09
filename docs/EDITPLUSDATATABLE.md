@@ -20,7 +20,7 @@ EditPlusDataTable(columnNames: tableColumnNames, tableLabel : Text("SALES ITEMS"
 
 ```dart
 EditPlusDataTable(columnNames: tableColumnNames, tableLabel : Text("SALES ITEMS"), tableEditable : false, refreshTableFunction: refreshTableFromREST)
-
+```
 
 ## RELATIONSHIP WITH BLOC
 
