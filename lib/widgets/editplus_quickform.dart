@@ -20,7 +20,7 @@ class EditplusQuickform extends StatelessWidget
 
   List<Widget> getElements()
   {
-    var widgetList = List<Widget>();
+    List<Widget> widgetList = [];
 
     for (var entry in widgetDescList)
     {
@@ -65,12 +65,10 @@ class EditplusQuickform extends StatelessWidget
         if (entry.widgettype == 'DATEINPUTFIELD')
         {
           var tfwidget = EditPlusDateInputFormField(
-              controller: new TextEditingController(),
               validationFunction: entry.validationfunction,
               label: entry.label,
               saveDataKey: entry.savekey,
               onSaveFunction: onSavedFunction,
-              // formDataContainer: dataContainer,
             );
 
           widgetList.add(tfwidget);
@@ -85,7 +83,6 @@ class EditplusQuickform extends StatelessWidget
               hintText: entry.label,
               saveDataKey: entry.savekey,
               onSaveFunction: onSavedFunction,
-              // formDataContainer: dataContainer,
             );
 
           widgetList.add(tfwidget);

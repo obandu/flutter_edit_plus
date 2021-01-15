@@ -35,3 +35,6 @@ This release ensures direct access of the widgets by only inherting edit_plus da
 1. Bug fixes and performance improvements for EditPlusTable.
 2. Interface finalized for EditPlusTable. Constructor requires label, column names, refresh function and whether or not table is editable. 
    Optionally, field editors from the edit_plus library are accepted for new row inputs.
+
+## [0.0.8] - 15 January 2021
+1. Stable API for the EditplusDateInputFormField and matching documentation including full example widget.

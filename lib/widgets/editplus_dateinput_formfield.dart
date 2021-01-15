@@ -1,19 +1,19 @@
 part of edit_plus;
 
 class EditPlusDateInputFormField extends StatefulWidget {
-  // final DateTime initialDate, firstDate, lastDate;
   final String saveDataKey;
-  final TextEditingController controller;
+  final TextEditingController controller = new TextEditingController();
   final label;
   final Function onSaveFunction;
   final Function validationFunction;
+ 
+  final Map formFieldContent = new Map();
 
   EditPlusDateInputFormField({
-    this.controller,
-    this.label,
-    this.validationFunction,
-    this.saveDataKey,
-    this.onSaveFunction
+    @required this.label,
+    @required this.validationFunction,
+    @required this.saveDataKey,
+    @required this.onSaveFunction
   });
 
   @override
@@ -27,38 +27,36 @@ class _EditPlusTextFormFieldDatePickerState extends State<EditPlusDateInputFormF
   Widget build(BuildContext context) {
     return TextFormField(
         controller: widget.controller,
-        // enabled: false,
         decoration: InputDecoration(
           labelText:  widget.label,
           border: OutlineInputBorder(),
         ),
-        validator: widget.validationFunction,
+        validator: (String value)
+        {
+          var validationresult = widget.validationFunction(widget.saveDataKey, value);
+          return validationresult;
+        },
         onTap: () {
           showDatePicker(
             context: context,
             initialDate: DateTime.now(),
             firstDate: DateTime(1900),
             lastDate: DateTime(2099),
-            // barrierDismissible: false,
           ).then((date) {
+            if (date == null) { return; }
             try {
               setState(() {
                 widget.controller.text =
                     DateFormat('dd MMMM yyyy').format(date);
-                // widget.formDataContainer[widget.saveDataKey] = DateFormat('yyyy-MM-dd').format(date);
-                widget.onSaveFunction(widget.saveDataKey, DateFormat('yyyy-MM-dd').format(date));
+                widget.formFieldContent[widget.saveDataKey] = DateFormat('yyyy-MM-dd').format(date);
               });
             } catch (exp) {
-              // print("Error at date picker - " + exp.toString());
+              print("Error in EditPlusTextFormFieldDatePickerState when picking date - " + exp.toString());
             }
           });
         },
-        onChanged: (value) {
-          // print("There was a change in date $value");
-        },
         onSaved: (savevalue) {
-          // print("Controller text date is  $savevalue");
-          widget.onSaveFunction(widget.saveDataKey, savevalue);
+          widget.onSaveFunction(widget.saveDataKey, widget.formFieldContent[widget.saveDataKey]);
         });
   }
 }

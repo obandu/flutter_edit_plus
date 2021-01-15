@@ -1,5 +1,4 @@
 # The EDITPLUSDATATABLE
-
 The EditPlusDataTable is a composite of a title (a text widget), a collection of editing buttons, a collection of input fields (only material TextFormField as at version 0.0.6) and a Material DataTable. 
 
 ## BACKGROUND
@@ -63,8 +62,7 @@ EditPlusDataTable(
   tableEditable : false, 
   refreshTableFunction: refreshTableFromREST)
 ```
-#### The refresh function. The bloc event expects a JSON collection of key value pairs where the keys are synonymous
-#### with the names of the table's columns.
+#### The refresh function. The bloc event expects a JSON collection of key value pairs where the keys are synonymous with the names of the table's columns.
 ```dart
   void refreshTableFromREST (EditPlusTableBloc tableBloc) async
   {
