@@ -20,3 +20,11 @@ The constructor takes in
 7. A size value. This is valid for text inputs with a maximum size e.g. TextFormField. At current version, this is not yet used.
 8. Other data. This is any other data for form field. For example the drop down button will have its values in a list as other data.
 
+```dart
+   EditPlusFormWidget(widgettype:EditPlusFormWidgetTypes.DROPDOWNBUTTON, label:'PLACE OF BIRTH',  savekey:'PLACEOFBIRTH',  validationFunction: formValidationFunction, otherData: ['Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America']),
+
+   EditPlusFormWidget(widgettype:EditPlusFormWidgetTypes.TEXTINPUTFIELD, label:'USER NAME',  savekey:'USERNAME',  validationFunction: formValidationFunction), 
+    
+   EditPlusFormWidget(widgettype:EditPlusFormWidgetTypes.PASSWORDINPUTFIELD, label:'PASSWORD',  savekey:'DEVPASSWORD',  validationFunction: formValidationFunction),
+```
+
