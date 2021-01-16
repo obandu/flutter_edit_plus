@@ -7,7 +7,7 @@ class EditplusQuickform extends StatelessWidget
   final GlobalKey formKey;
   final double spacing;
 
-  EditplusQuickform({this.widgetDescList, this.dataContainer, this.formKey, this.spacing});
+  EditplusQuickform({@required this.widgetDescList, this.dataContainer, @required this.formKey, this.spacing});
 
   Widget build(BuildContext context) {
     return Form(
@@ -26,35 +26,45 @@ class EditplusQuickform extends StatelessWidget
     {
       if (entry is EditPlusFormWidget)
       {
-        if (entry.widgettype == 'TEXTFIELD')
+        if (entry.widgettype == EditPlusFormWidgetTypes.TEXTINPUTFIELD)
         {
           var tfwidget = TextFormField(
             decoration: InputDecoration(
               labelText:  entry.label,
               border: OutlineInputBorder(),
             ),
-            onSaved: (String value) {
-              dataContainer[entry.savekey] = value;
+            onSaved: (value) 
+            {
+              getSaveFunction(entry)(entry.savekey, value);
             },
-            validator: entry.validationfunction,
-            onChanged: entry.onchangefunction,
+            validator: (String value)
+            {
+              var validationresult = entry.validationFunction(entry.label, value);
+              return validationresult;
+            },
+            onChanged: entry.onChangeFunction,
           );
           widgetList.add(tfwidget);
           widgetList.add(SizedBox(height: spacing,));
           continue;
         }
-        if (entry.widgettype == 'PASSWORDINPUTFIELD')
+        if (entry.widgettype == EditPlusFormWidgetTypes.PASSWORDINPUTFIELD)
         {
           var tfwidget = TextFormField(
             decoration: InputDecoration(
               labelText:  entry.label,
               border: OutlineInputBorder(),
             ),
-            onSaved: (String value) {
-              onSavedFunction(entry.savekey, value);
+            onSaved:  (value) 
+            {
+              getSaveFunction(entry)(entry.savekey, value);
             },
-            validator: entry.validationfunction,
-            onChanged: entry.onchangefunction,
+            validator: (String value)
+            {
+              var validationresult = entry.validationFunction(entry.label, value);
+              return validationresult;
+            },
+            onChanged: entry.onChangeFunction,
             obscureText: true,
             obscuringCharacter: "*",
           );
@@ -62,27 +72,27 @@ class EditplusQuickform extends StatelessWidget
           widgetList.add(SizedBox(height: spacing,));
           continue;
         }
-        if (entry.widgettype == 'DATEINPUTFIELD')
+        if (entry.widgettype == EditPlusFormWidgetTypes.DATEINPUTFIELD)
         {
           var tfwidget = EditPlusDateInputFormField(
-              validationFunction: entry.validationfunction,
+              validationFunction: entry.validationFunction,
               label: entry.label,
               saveDataKey: entry.savekey,
-              onSaveFunction: onSavedFunction,
+              onSaveFunction: getSaveFunction(entry),
             );
 
           widgetList.add(tfwidget);
           widgetList.add(SizedBox(height: spacing,));
           continue;
         }    
-        if (entry.widgettype == 'DROPDOWNLIST')
+        if (entry.widgettype == EditPlusFormWidgetTypes.DROPDOWNBUTTON)
         {
           var tfwidget = EditPlusStringDropdown(
               valuesList: entry.otherData,
-              validationFunction: entry.validationfunction,
+              validationFunction: entry.validationFunction,
               hintText: entry.label,
               saveDataKey: entry.savekey,
-              onSaveFunction: onSavedFunction,
+              onSaveFunction: getSaveFunction(entry),
             );
 
           widgetList.add(tfwidget);
@@ -96,26 +106,44 @@ class EditplusQuickform extends StatelessWidget
       }
 
     }
-    
     return widgetList;
   }
 
-  onSavedFunction(var key, var value)
+  Function getSaveFunction(EditPlusFormWidget entry)
   {
-    dataContainer[key] = value;
+    if (entry.saveFunction == null)
+    {
+      return saveFunction;
+    }
+
+    return entry.saveFunction;
   }
+
+  void saveFunction(var saveDataKey, var saveValue)
+  {
+    if (dataContainer != null)
+    {
+      dataContainer[saveDataKey] = saveValue;
+    }
+  }
+
+}
+
+enum EditPlusFormWidgetTypes {
+  DATEINPUTFIELD, TEXTINPUTFIELD, PASSWORDINPUTFIELD, DROPDOWNBUTTON
 
 }
 
 class EditPlusFormWidget
 {
-  final String widgettype;
+  final EditPlusFormWidgetTypes widgettype;
   final String label;
   final String savekey;
-  final Function validationfunction;
-  final Function onchangefunction;
+  final Function validationFunction;
+  final Function saveFunction;
+  final Function onChangeFunction;
   final int size; /// Valid for text inputs which have a maximum size
   final otherData;
 
-  EditPlusFormWidget({this.widgettype, this.label, this.savekey, this.validationfunction, this.onchangefunction, this.size, this.otherData});
+  EditPlusFormWidget({@required this.widgettype, @required this.label, @required this.savekey, @required this.validationFunction, this.saveFunction, this.onChangeFunction, this.size, this.otherData});
 }

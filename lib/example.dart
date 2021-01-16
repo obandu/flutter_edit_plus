@@ -55,10 +55,10 @@ class HomeScreen extends StatelessWidget
   {
     List<EditPlusFormWidget> widgetDescList = [];
 
-    var textFieldPIN = EditPlusFormWidget(widgettype:'TEXTFIELD', label:'-- PIN --',  savekey:'DEVPIN',  validationfunction:  simpleValidationFunction);
+    var textFieldPIN = EditPlusFormWidget(widgettype : EditPlusFormWidgetTypes.TEXTINPUTFIELD, label:'-- PIN --',  savekey:'DEVPIN',  validationFunction:  simpleValidationFunction);
     widgetDescList.add(textFieldPIN);
 
-    var textFieldDATE = EditPlusFormWidget(widgettype:'DATETEXTFIELD', label:'DATE OF BIRTH', savekey:'DOB', validationfunction:  simpleValidationFunction); 
+    var textFieldDATE = EditPlusFormWidget(widgettype: EditPlusFormWidgetTypes.DATEINPUTFIELD, label:'DATE OF BIRTH', savekey:'DOB', validationFunction:  simpleValidationFunction); 
     widgetDescList.add(textFieldDATE);  
 
     return EditplusQuickform(widgetDescList:widgetDescList, dataContainer:saveFormData, formKey:saveFormKey, spacing : 20);

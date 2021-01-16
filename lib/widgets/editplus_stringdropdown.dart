@@ -9,8 +9,8 @@ class EditPlusStringDropdown extends StatefulWidget {
   final String saveDataKey;
 
   EditPlusStringDropdown(
-      {this.valuesList,
-      this.hintText,
+      {@required this.valuesList,
+       @required this.hintText,
       this.validationFunction,
       this.onSaveFunction,
       this.saveDataKey});
@@ -41,7 +41,11 @@ class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
             widget.setSelectedValue(_value);
           });
         },
-        validator: widget.validationFunction,
+        validator: (value)
+        {
+          var validationresult = widget.validationFunction(widget.hintText, value);
+          return validationresult;
+        },
         items: widget.valuesList.map<DropdownMenuItem>((value) {
           return DropdownMenuItem(
             value: value,

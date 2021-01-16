@@ -33,7 +33,7 @@ class _EditPlusTextFormFieldDatePickerState extends State<EditPlusDateInputFormF
         ),
         validator: (String value)
         {
-          var validationresult = widget.validationFunction(widget.saveDataKey, value);
+          var validationresult = widget.validationFunction(widget.label, value);
           return validationresult;
         },
         onTap: () {
