@@ -95,3 +95,25 @@ class HomeScreen extends StatelessWidget
     return null;
   }
 }
+
+
+        /*if (entry.widgettype == EditPlusFormWidgetTypes.TEXTINPUTFIELD)
+        {
+          var tfwidget = EditplusTextformField(
+            label: entry.label, 
+            saveDataKey: entry.savekey, 
+            validationFunction : (String value)
+            {
+              var validationresult = entry.validationFunction(entry.label, value);
+              return validationresult;
+            },
+            onSaveFunction : (value) 
+            {
+              getSaveFunction(entry)(entry.savekey, value);
+            },
+            onChangeFunction: entry.onChangeFunction,
+          );
+          widgetList.add(tfwidget);
+          widgetList.add(SizedBox(height: spacing,));
+          continue;
+        } */

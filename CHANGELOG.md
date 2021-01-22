@@ -1,3 +1,6 @@
+## [0.1.0] - 22 January 2021
+1. Updates to TextFormField to fix bugs.
+
 ## [0.0.9] - 16 January 2021
 1. Stable API for the EditplusQuickForm, EditPlusFormWidget, EditPlusDateInput, EditPlusStringDropdown and associated documentation including full example.
 

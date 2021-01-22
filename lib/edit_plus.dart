@@ -10,6 +10,7 @@ part 'widgets/editplus_datatable.dart';
 part 'widgets/editplus_quickform.dart';
 part 'widgets/editplus_dateinput_formfield.dart';
 part 'widgets/editplus_stringdropdown.dart';
+part 'widgets/editplus_textformfield.dart';
 part 'widgets/tablerow_radiobutton.dart';
 part 'widgets/tablerow_checkbox.dart';
 

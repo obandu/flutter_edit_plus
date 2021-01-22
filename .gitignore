@@ -79,3 +79,4 @@ pubspec.lock
 # Do not include the main and example dart files
 lib/example.dart
 lib/main.dart
+lib/widgets/editplus_textformfield.dart

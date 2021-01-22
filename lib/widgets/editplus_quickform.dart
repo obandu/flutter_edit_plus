@@ -1,6 +1,6 @@
 part of edit_plus;
 
-class EditplusQuickform extends StatelessWidget
+class EditplusQuickform extends StatefulWidget
 {
   final List widgetDescList;
   final Map dataContainer;
@@ -8,10 +8,17 @@ class EditplusQuickform extends StatelessWidget
   final double spacing;
 
   EditplusQuickform({@required this.widgetDescList, this.dataContainer, @required this.formKey, this.spacing});
+   State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _EditPlusQuickFormState();
+  }
+}
 
+class _EditPlusQuickFormState extends State<EditplusQuickform>
+{
   Widget build(BuildContext context) {
     return Form(
-      key: formKey,
+      key: widget.formKey,
       child: Column(
         children: getElements(),
         )
@@ -22,7 +29,7 @@ class EditplusQuickform extends StatelessWidget
   {
     List<Widget> widgetList = [];
 
-    for (var entry in widgetDescList)
+    for (var entry in widget.widgetDescList)
     {
       if (entry is EditPlusFormWidget)
       {
@@ -45,9 +52,9 @@ class EditplusQuickform extends StatelessWidget
             onChanged: entry.onChangeFunction,
           );
           widgetList.add(tfwidget);
-          widgetList.add(SizedBox(height: spacing,));
+          widgetList.add(SizedBox(height: widget.spacing,));
           continue;
-        }
+        } 
         if (entry.widgettype == EditPlusFormWidgetTypes.PASSWORDINPUTFIELD)
         {
           var tfwidget = TextFormField(
@@ -69,7 +76,7 @@ class EditplusQuickform extends StatelessWidget
             obscuringCharacter: "*",
           );
           widgetList.add(tfwidget);
-          widgetList.add(SizedBox(height: spacing,));
+          widgetList.add(SizedBox(height: widget.spacing,));
           continue;
         }
         if (entry.widgettype == EditPlusFormWidgetTypes.DATEINPUTFIELD)
@@ -82,7 +89,7 @@ class EditplusQuickform extends StatelessWidget
             );
 
           widgetList.add(tfwidget);
-          widgetList.add(SizedBox(height: spacing,));
+          widgetList.add(SizedBox(height: widget.spacing,));
           continue;
         }    
         if (entry.widgettype == EditPlusFormWidgetTypes.DROPDOWNBUTTON)
@@ -96,7 +103,7 @@ class EditplusQuickform extends StatelessWidget
             );
 
           widgetList.add(tfwidget);
-          widgetList.add(SizedBox(height: spacing,));
+          widgetList.add(SizedBox(height: widget.spacing,));
           continue;
         }    
       }
@@ -121,9 +128,9 @@ class EditplusQuickform extends StatelessWidget
 
   void saveFunction(var saveDataKey, var saveValue)
   {
-    if (dataContainer != null)
+    if (widget.dataContainer != null)
     {
-      dataContainer[saveDataKey] = saveValue;
+      widget.dataContainer[saveDataKey] = saveValue;
     }
   }
 
