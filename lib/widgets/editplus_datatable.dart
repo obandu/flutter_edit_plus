@@ -143,8 +143,9 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: BlocConsumer<EditPlusTableBloc, Map<String, dynamic>>(
-                      buildWhen: (previous,current) {
-                        return true;
+                      buildWhen: (previous, current) {
+                        if (previous != current) {return true;}
+                        return false;
                       },
                       builder: (context, editPlusTableBloc) {
                         
@@ -204,6 +205,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
   {
     // create DataRows for DataTable rows
     widget.dataRows.clear();
+
     for (Map dataRowContent in dataRowsMapList)
     {
       List<DataCell> dataCells = [];
@@ -264,7 +266,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
 
     // the refresh button
     buttonList.add(
-      RaisedButton(
+      ElevatedButton(
         child: Icon(Icons.refresh),
         onPressed: ()
         {
@@ -285,7 +287,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
     if (widget.tableEditable == true)
     {
       buttonList.add(
-        RaisedButton(
+        ElevatedButton(
           child: Icon(Icons.add),
           onPressed: ()
           {
@@ -355,7 +357,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
     if (widget.tableEditable == true)
     {
       buttonList.add(               
-        RaisedButton(
+        ElevatedButton(
           child: Icon(Icons.save),
           onPressed: ()
           {

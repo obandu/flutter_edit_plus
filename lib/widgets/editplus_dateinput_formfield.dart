@@ -6,6 +6,7 @@ class EditPlusDateInputFormField extends StatefulWidget {
   final label;
   final Function onSaveFunction;
   final Function validationFunction;
+  final Function onChangedFunction;
  
   final Map formFieldContent = new Map();
 
@@ -13,7 +14,8 @@ class EditPlusDateInputFormField extends StatefulWidget {
     @required this.label,
     @required this.validationFunction,
     @required this.saveDataKey,
-    @required this.onSaveFunction
+    @required this.onSaveFunction,
+    this.onChangedFunction,
   });
 
   @override
@@ -49,6 +51,10 @@ class _EditPlusTextFormFieldDatePickerState extends State<EditPlusDateInputFormF
                 widget.controller.text =
                     DateFormat('dd MMMM yyyy').format(date);
                 widget.formFieldContent[widget.saveDataKey] = DateFormat('yyyy-MM-dd').format(date);
+                if (widget.onChangedFunction != null)
+                {
+                  widget.onChangedFunction(widget.saveDataKey, date);
+                }
               });
             } catch (exp) {
               print("Error in EditPlusTextFormFieldDatePickerState when picking date - " + exp.toString());

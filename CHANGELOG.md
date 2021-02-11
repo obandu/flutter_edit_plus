@@ -1,3 +1,6 @@
+## [0.1.1] - 08 February 2021
+1. Updates to EditPlusDateInputFormField to include possibility for onChangeFunction called when changes made even if widget is not part of a form. Function takes in widget key (name) and date (value)
+
 ## [0.1.0] - 22 January 2021
 1. Updates to TextFormField to fix bugs.
 
