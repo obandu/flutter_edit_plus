@@ -7,11 +7,15 @@ class EditplusQuickform extends StatefulWidget
   final GlobalKey formKey;
   final double spacing;
 
+  final Map textEditingControllers = new Map<String, TextEditingController>();
+
   EditplusQuickform({@required this.widgetDescList, this.dataContainer, @required this.formKey, this.spacing});
    State<StatefulWidget> createState() {
     // TODO: implement createState
     return _EditPlusQuickFormState();
   }
+
+
 }
 
 class _EditPlusQuickFormState extends State<EditplusQuickform>
@@ -23,6 +27,17 @@ class _EditPlusQuickFormState extends State<EditplusQuickform>
         children: getElements(),
         )
     );
+  }
+
+  clearForm()
+  { 
+    setState(() {
+      widget.textEditingControllers.forEach((key, value) 
+        { 
+          TextEditingController vl = value;
+          vl.clear();
+        });
+    });
   }
 
   List<Widget> getElements()
@@ -49,7 +64,11 @@ class _EditPlusQuickFormState extends State<EditplusQuickform>
               var validationresult = entry.validationFunction(entry.label, value);
               return validationresult;
             },
-            onChanged: entry.onChangeFunction,
+            controller: getEditingController(entry.label),
+            /* onChanged: (value)
+            {
+              print("change value is $value");
+            } */
           );
           widgetList.add(tfwidget);
           widgetList.add(SizedBox(height: widget.spacing,));
@@ -71,9 +90,20 @@ class _EditPlusQuickFormState extends State<EditplusQuickform>
               var validationresult = entry.validationFunction(entry.label, value);
               return validationresult;
             },
-            onChanged: entry.onChangeFunction,
+            controller: getEditingController(entry.label),
+            // onChanged: entry.onChangeFunction,
             obscureText: true,
             obscuringCharacter: "*",
+            /* onChanged: (value)
+            {
+              try {
+              print("change value is $value");
+              }
+              catch (exp)
+              {
+                print("Error when on change $exp");
+              }
+            } */
           );
           widgetList.add(tfwidget);
           widgetList.add(SizedBox(height: widget.spacing,));
@@ -110,6 +140,7 @@ class _EditPlusQuickFormState extends State<EditplusQuickform>
       if (entry is Widget)
       {
         widgetList.add(entry);
+        widgetList.add(SizedBox(height: widget.spacing,));
       }
 
     }
@@ -126,12 +157,32 @@ class _EditPlusQuickFormState extends State<EditplusQuickform>
     return entry.saveFunction;
   }
 
+  /*Function getChangeFunction(EditPlusFormWidget entry)
+  {
+    if (entry.onChangeFunction == null)
+    {
+      return saveFunction;
+    }
+
+    return entry.saveFunction;
+  } */
+
   void saveFunction(var saveDataKey, var saveValue)
   {
     if (widget.dataContainer != null)
     {
       widget.dataContainer[saveDataKey] = saveValue;
     }
+  }
+
+  TextEditingController getEditingController(entryLabel)
+  {
+    if (widget.textEditingControllers[entryLabel] == null)
+    {
+      widget.textEditingControllers[entryLabel] == new TextEditingController();
+    }
+
+    return widget.textEditingControllers[entryLabel];
   }
 
 }
@@ -148,9 +199,9 @@ class EditPlusFormWidget
   final String savekey;
   final Function validationFunction;
   final Function saveFunction;
-  final Function onChangeFunction;
+  // final Function onChangeFunction;
   final int size; /// Valid for text inputs which have a maximum size
   final otherData;
 
-  EditPlusFormWidget({@required this.widgettype, @required this.label, @required this.savekey, @required this.validationFunction, this.saveFunction, this.onChangeFunction, this.size, this.otherData});
+  EditPlusFormWidget({@required this.widgettype, @required this.label, @required this.savekey, @required this.validationFunction, this.saveFunction, this.size, this.otherData});
 }

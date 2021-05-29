@@ -25,11 +25,13 @@ class EditPlusUtils
 
   static List<Map<String, dynamic>> dataRowsFromJSON(var jsonTableList, var tableColumnNames)
   {
+    // print ("Requested refresh with dataRowsFrom JSON");
     // CONVERT TO LIST OF MAPS holding the key value pairs
     List<Map<String, dynamic>> tableDataRows = [];
     
     for (Map jsonItem in jsonTableList)
     {
+      // print ("The json item is $jsonItem");
       var rowDescription = Map <String, dynamic>();
       for (String columnName in tableColumnNames)
       {

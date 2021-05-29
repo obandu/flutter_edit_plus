@@ -4,6 +4,7 @@ class EditPlusDataTable extends StatefulWidget
 {
   final Text tableLabel;
   final List<String> columnNames;
+  final Map<String, dynamic> columnLabels;
   final bool tableEditable;
   final Map<String, Widget> fieldEditors;
   final Function refreshTableFunction;
@@ -22,7 +23,8 @@ class EditPlusDataTable extends StatefulWidget
      @required this.columnNames,
      @required this.tableEditable,
      @required this.refreshTableFunction,
-     this.fieldEditors}
+     this.fieldEditors,
+     this.columnLabels}
   );
 
   @override
@@ -103,7 +105,7 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
       tableColumns.add(
         DataColumn(
             label: Text(
-              columnName,
+              getColumnLabel(columnName),
               style: TextStyle(
                  fontSize: 16,
                  fontWeight: FontWeight.bold
@@ -199,6 +201,23 @@ class EditPlusDataTableState extends State<EditPlusDataTable>
         )
       );
     
+  }
+
+  String getColumnLabel(String columnName)
+  {
+    if (widget.columnLabels == null)
+    {
+      return columnName;
+    }
+
+    String columnLabel = widget.columnLabels[columnName];
+
+    if (columnLabel == null)
+    {
+      return columnName;
+    }
+
+    return columnLabel;
   }
 
   List<DataRow> getDataRows(var dataRowsMapList)

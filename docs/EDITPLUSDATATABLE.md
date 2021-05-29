@@ -39,11 +39,17 @@ A BLOC, EditPlusTableBloc is used for state management. The EditPlusDataTable ta
 To access the BLOC, it must be created within the scope of the calling widget. See below example where the bloc is created in a multi-bloc structure within the main application making it accessible to the whole application.
 
 ```dart
-EditPlusDataTable(
-  columnNames: tableColumnNames, 
-  tableLabel : Text("SALES ITEMS"), 
-  tableEditable : false, 
-  refreshTableFunction: refreshTableFromREST)
+void main() {
+  runApp(
+    MultiProvider(providers: [
+      BlocProvider<EditPlusTableBloc>(
+        create: (_) => EditPlusTableBloc(),
+      ),
+    ],
+    child : ExampleApp()
+    )
+  );
+}
 ```
 
 ## READING DATA CONTENT AFTER ROW CREATION
@@ -101,6 +107,8 @@ The constructor is of the format below
     {@required Text tableLabel,                // table label
      @required List<String> columnNames,       // column names for the table, required by Material DataTable
      @required bool tableEditable,             // determine if this is a read only table or table with ability to add items
-     @required Function refreshTableFunction,} // This function receives the BLOC in use by the table to end user application
+     @required Function refreshTableFunction,  // This function receives the BLOC in use by the table to end user application
+     Map<String, dynamic> columnLabels         // this map contains a mapping of column names to column labels  
+    }
   );
 ```
