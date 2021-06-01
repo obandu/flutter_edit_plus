@@ -124,15 +124,34 @@ class _EditPlusQuickFormState extends State<EditplusQuickform>
         }    
         if (entry.widgettype == EditPlusFormWidgetTypes.DROPDOWNBUTTON)
         {
+          print("The values are ${entry.otherData['VALUES']} \n\n and Widgets ${entry.otherData['WIDGETS']}");
+          List dataValues = entry.otherData['VALUES'] == null ? [] :  entry.otherData['VALUES'];
           var tfwidget = EditPlusStringDropdown(
-              valuesList: entry.otherData,
-              validationFunction: entry.validationFunction,
-              hintText: entry.label,
-              saveDataKey: entry.savekey,
-              onSaveFunction: getSaveFunction(entry),
-            );
+            valuesList: dataValues,
+            validationFunction: entry.validationFunction,
+            hintText: entry.label,
+            saveDataKey: entry.savekey,
+            onSaveFunction: getSaveFunction(entry),
+          );
 
-          widgetList.add(tfwidget);
+          List<Widget> otherWidgetList = entry.otherData['WIDGETS'] == null ? [] :  entry.otherData['WIDGETS'];
+
+          if (otherWidgetList.isEmpty)
+          {
+            widgetList.add(tfwidget);
+          }
+          else
+          {
+            List<Widget> allWidgetList = [];
+            allWidgetList.add(tfwidget);
+            allWidgetList.addAll(otherWidgetList);
+            widgetList.add(
+              Row (
+                children: allWidgetList,
+              )
+            );
+          }
+          
           widgetList.add(SizedBox(height: widget.spacing,));
           continue;
         }    
@@ -144,7 +163,7 @@ class _EditPlusQuickFormState extends State<EditplusQuickform>
       }
 
     }
-    return widgetList;
+    return widgetList; 
   }
 
   Function getSaveFunction(EditPlusFormWidget entry)

@@ -18,10 +18,25 @@ The constructor takes in
 5. A save function. This is optional but would allow the processing of data in the calling application before save.
 6. An onChange function. This is optional but can allow for the processing of data on input. For example allow application to react on entering 4-digit PIN.
 7. A size value. This is valid for text inputs with a maximum size e.g. TextFormField. At current version, this is not yet used.
-8. Other data. This is any other data for form field. For example the drop down button will have its values in a list as other data.
+8. Other data. This is a MAP containing any other data for form field. For example the drop down button may have its values in a list as other data. This is then given in the 'VALUES' element of the otherData MAP. The elements supported for otherData are named with the keys below.
+   'VALUES'  - contains the values for the DROPDOWNBUTTON widget.
+   'WIDGETS' - a List that contains other widgets that are composed on the same row in the form as the editplus form widget. This could be a trailing button for a DROPDOWN or even TEXTFIELD.
 
 ```dart
-   EditPlusFormWidget(widgettype:EditPlusFormWidgetTypes.DROPDOWNBUTTON, label:'PLACE OF BIRTH',  savekey:'PLACEOFBIRTH',  validationFunction: formValidationFunction, otherData: ['Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America']),
+
+   ElevatedButton selButton =
+   ElevatedButton (
+     onPressed : () {},
+     child : Text("OK")
+   );
+
+   var countryList = ['Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America'];
+   
+   var otherDataMap = Map<String, dynamic>();
+   otherDataMap['VALUES'] = countryList;
+   otherDataMap['WIDGETS'] = [selButton]; // MUST ALWAYS BE A WIDGET LIST
+
+   EditPlusFormWidget(widgettype:EditPlusFormWidgetTypes.DROPDOWNBUTTON, label:'PLACE OF BIRTH',  savekey:'PLACEOFBIRTH',  validationFunction: formValidationFunction, otherData: otherDataMap ),
 
    EditPlusFormWidget(widgettype:EditPlusFormWidgetTypes.TEXTINPUTFIELD, label:'USER NAME',  savekey:'USERNAME',  validationFunction: formValidationFunction), 
     
