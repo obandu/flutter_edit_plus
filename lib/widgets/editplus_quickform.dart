@@ -143,8 +143,11 @@ class _EditPlusQuickFormState extends State<EditplusQuickform>
           else
           {
             List<Widget> allWidgetList = [];
-            allWidgetList.add(tfwidget);
-            allWidgetList.addAll(otherWidgetList);
+            allWidgetList.add(Expanded(child: tfwidget,));
+            if (otherWidgetList.isNotEmpty)
+            {
+              allWidgetList.addAll(otherWidgetList);
+            }
             widgetList.add(
               Row (
                 children: allWidgetList,

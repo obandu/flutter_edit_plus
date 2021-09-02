@@ -43,7 +43,7 @@ class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
         },
         validator: (value)
         {
-          var validationresult = widget.validationFunction(widget.hintText, value);
+          var validationresult = widget.validationFunction(widget.hintText, value.toString());
           return validationresult;
         },
         items: widget.valuesList.map<DropdownMenuItem>((value) {
