@@ -1,17 +1,17 @@
 # The EDITPLUSDATEINPUTFORMFIELD
-The EditPlusDateInputFormField is a composite of the material widgets TextInputFormField and a date picker (as at version 0.0.6).
+The EditPlusDateInputFormField is a composite of the material widgets TextInputFormField and a date picker (as at version 1.5.10).
 
 ## BACKGROUND
-The objective was to have a simple date picker that displays the date in a friendly and consistent way while onSave, provides the date in the format YYYY-MM-DD that can be directly saved into a database.
+The objective was to have a simple date picker that displays the date in an anambigous way while at the same time, onSave, it provides the date in the format YYYY-MM-DD that can be directly saved into an SQL database. Different Locales display dates differently so this widget displays the date in long format dd MMMM yyyy
 
 ## FUNCTIONS
-This is a simple date picker that can be function as a child of a Material form supporting form validation and form saving. As at version 0.0.6 it only has minimal decoration.
+This is a simple date picker that can be function as a child of a Material form supporting form validation and form saving. As at version 1.5.10 it only has minimal decoration.
 
 It takes in 4 mandatory inputs
 1. A label which shows as the input prompt
 2. A saveDataKey which is a data label used to return data onSave or onValidate to the calling application.
-3. A validation function, this can be implemented separately or inline as shown in the example below. The widget passes in the value held by the TextFormField and the saveDataKey which tells the calling application the DateInputFormField that generated the validation request. This allows the use of a single validation function for multiple DateInputFormFields. Due to the similarity with [EditPlusFormWidget](./EDITPLUSFORMWIDGET.md) used in [EditPlusQuickForms](./EDITPLUSQUICKFORM.md) in that they also take in a saveDataKey, the function may also be shared with other Quick Form widgets.
-4. A save function that is like the validation function above and is called by the Material form.save function. It passes a saveDataKey and the background value. The value passed in for saving is the date in the form of YYYY-MM-DD that can be directly used
+3. A validation function, this can be implemented separately or inline as shown in the example below. The widget passes in the value held by the TextFormField and the saveDataKey which tells the calling application the DateInputFormField that generated the validation request. 
+4. A save function that is like the validation function above and is called by the Material form.save function. It passes a saveDataKey and the date value in the form of YYYY-MM-DD that can be directly used
 
 ## SAMPLE DATEINPUTFORMFIELD CONTAINING WIDGET
 The code below can be copied and used as home screen in your main application as the home widget in a Material App.

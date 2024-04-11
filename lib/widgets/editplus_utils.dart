@@ -1,5 +1,5 @@
 part of edit_plus;
-  
+
 class EditPlusUtils
 {
   static String getTableListAsJSON(List<Map<String, dynamic>> dataRows)
@@ -42,4 +42,22 @@ class EditPlusUtils
 
     return tableDataRows;
   }
+
+  static String getTableListAsCSV(List dataRows, List tableColumns)
+  {
+    String csvcontent = tableColumns.toString();
+
+    for (var dRow in dataRows)
+    {
+      var dataRow = dRow as Map;
+      csvcontent += "\n";
+      for (String dkey in dataRow.keys)
+      {
+        csvcontent += dataRow[dkey].toString() + ',';
+      }
+      csvcontent = csvcontent.substring(0, csvcontent.length-1);
+    }
+
+    return csvcontent;
+  }  
 }

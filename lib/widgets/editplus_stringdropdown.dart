@@ -1,19 +1,25 @@
 part of edit_plus;
 
 class EditPlusStringDropdown extends StatefulWidget {
+  // List of values for the dropdown. All the classes for the values should have a 'toString' function that yields a string value for the objects
   final List<dynamic> valuesList;
-  final valueContainer = new Map<String, dynamic>();
+
+  // valueContainer is useful when working with
+  final Map valueContainer;
   final String hintText;
-  final Function validationFunction;
-  final Function onSaveFunction;
-  final String saveDataKey;
+  final Function? validationFunction;
+  final Function? onSaveFunction;
+  final Function? onSelectFunction;
+  final String? saveDataKey;
 
   EditPlusStringDropdown(
-      {@required this.valuesList,
-       @required this.hintText,
+      {required this.valuesList,
+       required this.hintText,
+       required this.valueContainer,
       this.validationFunction,
       this.onSaveFunction,
-      this.saveDataKey});
+      this.saveDataKey,
+      this.onSelectFunction});
 
   @override
   _EditPlusStringdropdownState createState() {
@@ -22,9 +28,15 @@ class EditPlusStringDropdown extends StatefulWidget {
 
   setSelectedValue(var value) {
     valueContainer['VALUE'] = value;
+    if (onSelectFunction != null)
+    {
+      onSelectFunction!(value);
+    }
   }
 
   get values => valueContainer; 
+
+  get instanceCopy => EditPlusStringDropdown(valuesList: valuesList, hintText: hintText, valueContainer: valueContainer);
 }
 
 class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
@@ -32,7 +44,7 @@ class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField(
+    return DropdownButtonFormField<String>(
         elevation: 16,
         style: TextStyle(color: Colors.blueAccent),
         onChanged: (newValue) {
@@ -43,10 +55,10 @@ class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
         },
         validator: (value)
         {
-          var validationresult = widget.validationFunction(widget.hintText, value.toString());
+          var validationresult = widget.validationFunction!(widget.hintText, value.toString());
           return validationresult;
         },
-        items: widget.valuesList.map<DropdownMenuItem>((value) {
+        items: widget.valuesList.map<DropdownMenuItem<String>>((value) {
           return DropdownMenuItem(
             value: value,
             child: Text(value.toString()),
@@ -56,9 +68,9 @@ class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
         decoration: InputDecoration(
           border: OutlineInputBorder(),
         ),
-        value: _value,
+        value: widget.valueContainer['VALUE'],
         onSaved: (savevalue) {
-          widget.onSaveFunction(widget.saveDataKey, savevalue);
+          widget.onSaveFunction!(widget.saveDataKey, savevalue);
         });
   }
 }
