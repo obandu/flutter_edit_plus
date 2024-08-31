@@ -388,8 +388,9 @@ class _EditPlusDataTableState extends State<EditPlusDataTable>
 
   ValueKey<String> getRowKeyValue(var dataRowContent)
   {
-    String valkey = dataRowContent[widget.keyColumnName];
-    if (valkey == null)
+    // print("Key column name is ${widget.keyColumnName} and datarow content is ${dataRowContent}" );
+    String valkey = dataRowContent[widget.keyColumnName].toString();
+    if (valkey == "null")
     {
       valkey = alternativeKeyAsRowIndex.toString();
       alternativeKeyAsRowIndex += 1;
