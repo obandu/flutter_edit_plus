@@ -13,3 +13,4 @@ part 'widgets/editplus_datatable.dart';
 part 'widgets/pretty_datatable.dart';
 part 'widgets/editplus_utils.dart';
 part 'widgets/editplus_alerts.dart';
+part 'widgets/editplus_uiutils.dart';
