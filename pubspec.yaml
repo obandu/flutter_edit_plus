@@ -1,16 +1,22 @@
 name: edit_plus
 description: Useful editing widgets that enhance built-in flutter widgets.
-version: 1.6.21
+version: 1.18.25
 author: Jonas Obara
 
+# CHANGELOG
+# 1.08.25 - Added UiUtils - Several utilities for working with flutter UI
+
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: '>=3.2.3 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
-  intl: ^0.20.1
+  intl: 0.20.1
+
+# connectivity
+  http: 1.2.2
 
 dev_dependencies:
   flutter_test:

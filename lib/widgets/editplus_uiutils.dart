@@ -1,6 +1,8 @@
 part of edit_plus;
 
 class EditPlusUiUtils {
+  static const LARGE_WIDTH = 1, MEDIUM_WIDTH = 2, SMALL_WIDTH = 3;
+
   static InputDecoration getFormTextFieldDecoration(
     String labelText,
     String hintText,
@@ -13,7 +15,8 @@ class EditPlusUiUtils {
     );
   }
 
-  static Text getBoldLabelText(String labelText) {
+  static Text getBoldLabelText(String labelText,
+      {int? fontSize, TextAlign? textAlignment}) {
     return Text(
       labelText,
       style: (TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
@@ -29,17 +32,34 @@ class EditPlusUiUtils {
     return Text(text, style: (TextStyle(fontSize: size, fontWeight: weight)));
   }
 
-  static Enum SMALL_WIDTH, MEDIUM_WIDTH, LARGE_WIDTH;
-
-  static Enum getBodySize(BuildContext context) {
-    Size bodySize = MediaQuery.getSize(context);
+  static int getBodySize(BuildContext context) {
+    Size bodySize = MediaQuery.sizeOf(context);
 
     if (bodySize.width < 600) {
-      return SMALL_WIDTH;
+      return EditPlusUiUtils.SMALL_WIDTH;
     } else if (bodySize.width < 1280) {
-      return MEDIUMS_WIDTH;
+      return EditPlusUiUtils.MEDIUM_WIDTH;
     }
 
-    return LARGE_WIDTH;
+    return EditPlusUiUtils.LARGE_WIDTH;
+  }
+
+  static Widget getAppBar(Widget title) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      SizedBox(height: 38, child: Row(children: [Expanded(child: title)])),
+    ]);
+  }
+
+  static Widget getLeadingLogo() {
+    return Container(
+      width: 36,
+      height: 36,
+      margin: EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        image: new DecorationImage(
+            fit: BoxFit.cover,
+            image: Image.asset('assets/images/logo.png').image),
+      ),
+    );
   }
 }
