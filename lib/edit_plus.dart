@@ -13,6 +13,7 @@ part 'widgets/dateinput_formfield.dart';
 part 'widgets/editplus_stringdropdown.dart';
 part 'widgets/editplus_datatable.dart';
 part 'widgets/pretty_datatable.dart';
+part 'widgets/editplus_text_input.dart';
 part 'widgets/editplus_utils.dart';
 part 'widgets/editplus_alerts.dart';
 part 'widgets/editplus_uiutils.dart';

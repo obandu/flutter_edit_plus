@@ -29,7 +29,8 @@ class EditPlusUiUtils {
     required double size,
     Color? color,
   }) {
-    return Text(text, style: (TextStyle(fontSize: size, fontWeight: weight)));
+    return Text(text,
+        style: (TextStyle(fontSize: size, fontWeight: weight, color: color!)));
   }
 
   static int getBodySize(BuildContext context) {
