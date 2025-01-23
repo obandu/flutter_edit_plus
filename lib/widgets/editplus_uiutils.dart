@@ -4,14 +4,12 @@ class EditPlusUiUtils {
   static const LARGE_WIDTH = 1, MEDIUM_WIDTH = 2, SMALL_WIDTH = 3;
 
   static InputDecoration getFormTextFieldDecoration(
-    String labelText,
-    String hintText,
-  ) {
+      {String? label, String? hint}) {
     return InputDecoration(
-      // hintText: 'Category Name',
+      hintText: hint,
       focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 1.0)),
       enabledBorder: OutlineInputBorder(borderSide: BorderSide(width: 1.0)),
-      labelText: labelText,
+      labelText: label,
     );
   }
 
@@ -30,7 +28,7 @@ class EditPlusUiUtils {
     Color? color,
   }) {
     return Text(text,
-        style: (TextStyle(fontSize: size, fontWeight: weight, color: color!)));
+        style: (TextStyle(fontSize: size, fontWeight: weight, color: color)));
   }
 
   static int getBodySize(BuildContext context) {

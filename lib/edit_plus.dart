@@ -1,7 +1,6 @@
 library edit_plus;
 
 import 'dart:math';
-import 'dart:typed_data';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -12,6 +11,7 @@ import 'package:http/http.dart' as http;
 part 'widgets/dateinput_formfield.dart';
 part 'widgets/editplus_stringdropdown.dart';
 part 'widgets/editplus_datatable.dart';
+part 'widgets/editplus_formmaker.dart';
 part 'widgets/pretty_datatable.dart';
 part 'widgets/editplus_text_input.dart';
 part 'widgets/editplus_utils.dart';

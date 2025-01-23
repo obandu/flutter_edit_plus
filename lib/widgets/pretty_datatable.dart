@@ -299,7 +299,7 @@ class _PrettyDataTableState extends State<PrettyDataTable>
 
                     TextEditingController? tec = tff.controller;
                     String value = tec!.value.text;
-                    if (value == null || value.isEmpty) {continue; }
+                    if (value.isEmpty) {continue; }
                     String valuekey = valueKey.value.toString();
                     int splitpos = valuekey.indexOf(" -");
                     List<String> valkl = valuekey.split('-');
@@ -494,7 +494,7 @@ class _PrettyDataTableState extends State<PrettyDataTable>
 
                   TextEditingController? tec = tff.controller;
                   String value = tec!.value.text;
-                  if (value == null || value.isEmpty) {return; }
+                  if (value.isEmpty) {return; }
                   String valuekey = valueKey.value.toString();
                   int splitpos = valuekey.indexOf(" -");
                   List<String> valkl = valuekey.split('-');

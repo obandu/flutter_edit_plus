@@ -441,7 +441,7 @@ class _EditPlusDataTableState extends State<EditPlusDataTable> {
 
                           TextEditingController? tec = tff.controller;
                           String value = tec!.value.text;
-                          if (value == null || value.isEmpty) {
+                          if (value.isEmpty) {
                             continue;
                           }
                           String valuekey = valueKey.value.toString();
@@ -779,7 +779,7 @@ class _EditPlusDataTableState extends State<EditPlusDataTable> {
 
                   TextEditingController? tec = tff.controller;
                   String value = tec!.value.text;
-                  if (value == null || value.isEmpty) {
+                  if (value.isEmpty) {
                     return;
                   }
                   String valuekey = valueKey.value.toString();
