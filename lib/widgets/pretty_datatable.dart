@@ -170,9 +170,9 @@ class _PrettyDataTableState extends State<PrettyDataTable>
               runSpacing: 10.0,
               children: [
                 widget.tableLabel, // the table label
-                ButtonBar( // the table management buttons
-                  buttonTextTheme: ButtonTextTheme.normal,
-                  buttonPadding: const EdgeInsets.all(5.0),
+                OverflowBar( // the table management buttons
+                  // buttonTextTheme: ButtonTextTheme.normal,
+                  // buttonPadding: const EdgeInsets.all(5.0),
                   children: getButtons(),
                 ),
               ]

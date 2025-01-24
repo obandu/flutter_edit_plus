@@ -59,14 +59,12 @@ class EditPlusDataTable extends StatefulWidget {
     this.fieldsWithFormattingFunction,
     this.columnLabels,
     this.refreshTableFunction,
-
     this.saveTableFunction,
     this.saveRowFunction,
     this.showMessageFunction,
     this.dismissProgressDialogFunction,
     this.getFieldEditorFunction,
     this.deleteRowFunction,
-
     this.rowColors,
   });
 
@@ -170,10 +168,10 @@ class _EditPlusDataTableState extends State<EditPlusDataTable> {
               SizedBox(width: 5),
               Expanded(child: widget.tableLabel),
               Expanded(
-                child: ButtonBar(
+                child: OverflowBar(
                   // the table management buttons
-                  buttonTextTheme: ButtonTextTheme.normal,
-                  buttonPadding: const EdgeInsets.all(5.0),
+                  // buttonTextTheme: ButtonTextTheme.normal,
+                  spacing: 5.0,
                   children: getButtons(),
                 ),
               ),
@@ -187,10 +185,9 @@ class _EditPlusDataTableState extends State<EditPlusDataTable> {
               SizedBox(width: 5),
               ElevatedButton.icon(
                 onPressed: () {
-                  tableWidthScrollOffset =
-                      (tableWidthScrollOffset > 0)
-                          ? (tableWidthScrollOffset - 50.0)
-                          : 0;
+                  tableWidthScrollOffset = (tableWidthScrollOffset > 0)
+                      ? (tableWidthScrollOffset - 50.0)
+                      : 0;
                   tableWidthScrollController.jumpTo(
                     tableWidthScrollOffset,
                   ); //animateTo(tableWidthScrollOffset, duration: Duration(seconds: 1), curve: Curves.easeIn);
@@ -251,11 +248,10 @@ class _EditPlusDataTableState extends State<EditPlusDataTable> {
                   controller: ScrollController(),
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(minWidth: 800),
-                    child:
-                        (widget.tableEditable == true &&
-                                widget.tableExtensible == true)
-                            ? Form(key: editRowFormState, child: innerDataTable)
-                            : innerDataTable,
+                    child: (widget.tableEditable == true &&
+                            widget.tableExtensible == true)
+                        ? Form(key: editRowFormState, child: innerDataTable)
+                        : innerDataTable,
                   ),
                 ),
               ),
@@ -389,10 +385,9 @@ class _EditPlusDataTableState extends State<EditPlusDataTable> {
       var dcellCheckBox = DataCell(dcheckBox);
       dataCells.add(dcellCheckBox);
       for (String columnName in widget.columnNames) {
-        var tvalue =
-            dataRowContent[columnName] == null
-                ? "*"
-                : dataRowContent[columnName];
+        var tvalue = dataRowContent[columnName] == null
+            ? "*"
+            : dataRowContent[columnName];
         dataCells.add(getDataCell(columnName, tvalue, rowIndex));
       }
 
@@ -417,7 +412,7 @@ class _EditPlusDataTableState extends State<EditPlusDataTable> {
         }
       }
 
-      if (widget.canEditRow != null && widget.canEditRow == true) {
+      if (widget.canEditRow == true) {
         if (rowEditIndex == rowIndex) {
           dataCells.add(
             DataCell(
@@ -685,10 +680,9 @@ class _EditPlusDataTableState extends State<EditPlusDataTable> {
 
   List<Widget> getButtons() {
     List<Widget> buttonList = [];
-    bool creatingRow =
-        widget.tableEditStatus['CREATINGROW'] == null
-            ? false
-            : widget.tableEditStatus['CREATINGROW'];
+    bool creatingRow = widget.tableEditStatus['CREATINGROW'] == null
+        ? false
+        : widget.tableEditStatus['CREATINGROW'];
     // var editingRow = widget.tableEditStatus['EDITINGROW'] == null ? false : widget.tableEditStatus['EDITINGROW'];
 
     // the refresh button
@@ -738,10 +732,9 @@ class _EditPlusDataTableState extends State<EditPlusDataTable> {
     if (widget.tableEditable == true && widget.tableExtensible == true) {
       buttonList.add(
         ElevatedButton(
-          child:
-              creatingRow == false
-                  ? const Icon(Icons.add)
-                  : const Icon(Icons.cancel, color: Colors.red),
+          child: creatingRow == false
+              ? const Icon(Icons.add)
+              : const Icon(Icons.cancel, color: Colors.red),
           onPressed: () {
             if (creatingRow == true) {
               widget.tableEditStatus['CREATINGROW'] = false;
@@ -851,12 +844,11 @@ class _EditPlusDataTableState extends State<EditPlusDataTable> {
     bool editEnabled, {
     var dataValue,
   }) {
-    TextAlign textFieldAlignment =
-        (widget.fieldsWithAlignment != null &&
-                widget.fieldsWithAlignment!.containsKey(textName) &&
-                widget.fieldsWithAlignment![textName] is TextAlign)
-            ? widget.fieldsWithAlignment![textName]
-            : TextAlign.start;
+    TextAlign textFieldAlignment = (widget.fieldsWithAlignment != null &&
+            widget.fieldsWithAlignment!.containsKey(textName) &&
+            widget.fieldsWithAlignment![textName] is TextAlign)
+        ? widget.fieldsWithAlignment![textName]
+        : TextAlign.start;
 
     Function textFieldFormatFunction =
         (widget.fieldsWithFormattingFunction != null &&
@@ -865,20 +857,19 @@ class _EditPlusDataTableState extends State<EditPlusDataTable> {
             ? widget.fieldsWithFormattingFunction![textName]
             : returnGiven;
 
-    InputDecoration textFormDecoration =
-        editEnabled
-            ? InputDecoration(
-              hintText: textName,
-              // hintStyle: TextStyle(color: Colors.blueAccent),
-              border: const OutlineInputBorder(),
-              fillColor: Colors.grey[200],
-            )
-            : InputDecoration(
-              hintText: textName,
-              hintStyle: TextStyle(color: Colors.blueAccent),
-              fillColor: Colors.grey[200],
-              filled: true,
-            );
+    InputDecoration textFormDecoration = editEnabled
+        ? InputDecoration(
+            hintText: textName,
+            // hintStyle: TextStyle(color: Colors.blueAccent),
+            border: const OutlineInputBorder(),
+            fillColor: Colors.grey[200],
+          )
+        : InputDecoration(
+            hintText: textName,
+            hintStyle: TextStyle(color: Colors.blueAccent),
+            fillColor: Colors.grey[200],
+            filled: true,
+          );
 
     var fieldValue = dataValue.toString();
     if (textFieldFormatFunction != null) {
@@ -969,9 +960,8 @@ class _EditPlusDataTableState extends State<EditPlusDataTable> {
       }
 
       for (var columnName in widget.columnNames) {
-        DataCell drcell =
-            dataRow.cells.elementAt(widget.columnNames.indexOf(columnName) + 1)
-                as DataCell;
+        DataCell drcell = dataRow.cells
+            .elementAt(widget.columnNames.indexOf(columnName) + 1) as DataCell;
         if (drcell.child is Text) {
           Text cellEntry = drcell.child as Text;
           mpDrow[columnName] = cellEntry.data;
