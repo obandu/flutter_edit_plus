@@ -14,10 +14,11 @@ class EditPlusUiUtils {
   }
 
   static Text getBoldLabelText(String labelText,
-      {int? fontSize, TextAlign? textAlignment}) {
+      {double? fontSize, TextAlign? textAlignment}) {
+    fontSize = (fontSize == null) ? 28 : fontSize;
     return Text(
       labelText,
-      style: (TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+      style: (TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
     );
   }
 
