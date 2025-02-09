@@ -14,8 +14,13 @@ class EditplusFormMaker {
     return false;
   }
 
-  Widget renderForm(String formBody) {
-    var formStructure = evaluateForm(formBody);
+  Widget makeForm(String formAsJSON) {
+    var formStructure = evaluateForm(formAsJSON);
+
+    return renderFormBody(formStructure);
+  }
+
+  Widget renderFormBody(var formStructure) {
     var formItems = <Widget>[];
 
     // get FormName and return it (this is usually the first element)
@@ -28,43 +33,91 @@ class EditplusFormMaker {
         (formStructure["ELEMENTS"] == null) ? [] : formStructure["ELEMENTS"];
 
     for (var formElement in formElements) {
-      if (formElement["TYPE"] == null) {
+      Widget? formElementWidget = renderFormElement(formElement);
+      if (formElementWidget == null) {
         continue;
-      } else if (formElement["TYPE"] == "SPACE") {
-        formItems.add(SizedBox(
-          height: 10,
-        ));
-      } else if (formElement["NAME"] == null) {
-        continue;
-      } else if (formElement["TYPE"] == "SECTION") {
-        String sectionLabel = formElement["LABEL"] != null
-            ? formElement["LABEL"]
-            : "ERROR : SECTION ELEMENT CREATED WITHOUT LABEL";
-        formItems
-            .add(EditPlusUiUtils.getBoldLabelText(sectionLabel, fontSize: 16));
-      } else if (formElement["TYPE"] == "TEXTFIELD") {
-        formItems.add(TextFormField(
-          decoration: EditPlusUiUtils.getFormTextFieldDecoration(
-              label: formElement["LABEL"], hint: formElement["LABEL"]),
-        ));
-      } else if (formElement["TYPE"] == "DROPDOWN") {
-        formItems.add(EditPlusStringDropdown(
-            hintText: formElement["LABEL"],
-            valuesList: ["dynamically acquired"],
-            valueContainer: {}));
-      } else if (formElement["TYPE"] == "BUTTON") {
-        formItems.add(OutlinedButton(
-            onPressed: callFunction, child: Text(formElement["LABEL"])));
-      } else {
-        formItems.add(EditPlusUiUtils.getBoldLabelText(
-            "Element of type ${formElement["TYPE"]} not yet factored in form maker"));
       }
+      formItems.add(formElementWidget);
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: formItems,
     );
+  }
+
+  Widget renderFormSection(var formSectionStructure) {
+    var formSectionItems = <Widget>[];
+
+    // get FormName and return it (this is usually the first element)
+    var formSectionLabel = (formSectionStructure["LABEL"] == null)
+        ? ""
+        : formSectionStructure["LABEL"];
+    formSectionItems.add(EditPlusUiUtils.getBoldLabelText(formSectionLabel));
+
+    List formSectionElements = (formSectionStructure["ELEMENTS"] == null)
+        ? []
+        : formSectionStructure["ELEMENTS"];
+
+    for (var formSecElement in formSectionElements) {
+      Widget? formSElementWidget = renderFormElement(formSecElement);
+      if (formSElementWidget == null) {
+        continue;
+      }
+      formSectionItems.add(formSElementWidget);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: formSectionItems,
+    );
+  }
+
+  Widget? renderFormElement(var formElement) {
+    String formElementType = formElement["TYPE"];
+
+    if (formElement["TYPE"] == null) {
+      return null;
+    }
+
+    if (formElement["TYPE"] == 'SPACE') {
+      return SizedBox(height: 10);
+    }
+
+    if (formElement["NAME"] == null) {
+      return EditPlusUiUtils.getBoldLabelText(
+          "ELEMENT '$formElementType' requires a NAME",
+          fontSize: 16);
+    }
+
+    Widget returnWidget = Text("ELEMENT NOT DEFINED PROPERLY $formElementType");
+
+    switch (formElementType) {
+      case "SECTION":
+        renderFormSection(formElement);
+        break;
+      case "TEXTFIELD":
+        returnWidget = TextFormField(
+          decoration: EditPlusUiUtils.getFormTextFieldDecoration(
+              label: formElement["LABEL"], hint: formElement["LABEL"]),
+        );
+        break;
+      case "DROPDOWN":
+        returnWidget = EditPlusStringDropdown(
+            hintText: formElement["LABEL"],
+            valuesList: ["dynamically acquired"],
+            valueContainer: {});
+        break;
+      case "BUTTON":
+        returnWidget = OutlinedButton(
+            onPressed: callFunction, child: Text(formElement["LABEL"]));
+        break;
+      default:
+        EditPlusUiUtils.getBoldLabelText(
+            "Element of type ${formElement["TYPE"]} not yet factored in form maker");
+    }
+
+    return returnWidget;
   }
 
   Map<String, dynamic> evaluateForm(String formBodyAsJSON) {
