@@ -1,18 +1,17 @@
 part of edit_plus;
 
-class EditplusAlerts
-{
-
-  static void showAlertDialog(BuildContext context, {required String message, required String title}) 
-  {
+class EditplusAlerts {
+  static void showAlertDialog(BuildContext context,
+      {required String message, required String title}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           titlePadding: EdgeInsets.zero,
-          title: Container (
+          title: Container(
             padding: const EdgeInsets.all(8),
-            child:  Text(title, style: Theme.of(context).primaryTextTheme.headlineSmall),
+            child: Text(title,
+                style: Theme.of(context).primaryTextTheme.headlineSmall),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
             ),
@@ -32,8 +31,8 @@ class EditplusAlerts
           ],
         );
       },
-    );    
-  } 
+    );
+  }
 
   /* static void dismissProgressDialog(BuildContext context)
   {
@@ -91,8 +90,8 @@ class EditplusAlerts
     );  
   } */
 
-  static void showProgressDialogWithMessage(BuildContext context, String message) 
-  {
+  static void showProgressDialogWithMessage(
+      BuildContext context, String message) {
     showDialog(
       context: context,
       useSafeArea: true,
@@ -100,13 +99,16 @@ class EditplusAlerts
       builder: (BuildContext context) {
         return AlertDialog(
           title: new Text("Please wait ...."),
-          content: Column(
-            children: [
-              LinearProgressIndicator(),
-              SizedBox(height: 20,),
-              Text(message, style: Theme.of(context).textTheme.labelLarge,)
-            ]
-          ),
+          content: Column(children: [
+            LinearProgressIndicator(),
+            SizedBox(
+              height: 20,
+            ),
+            Text(
+              message,
+              style: Theme.of(context).textTheme.labelLarge,
+            )
+          ]),
           actions: <Widget>[
             new TextButton(
               child: new Text("DISMISS"),
@@ -117,20 +119,20 @@ class EditplusAlerts
           ],
         );
       },
-    );  
+    );
   }
 
-
-  static void showConfirmDialog(BuildContext context, String message, {Function? confirmCallBack}) 
-  {
+  static void showConfirmDialog(BuildContext context, String message,
+      {Function? confirmCallBack}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           titlePadding: EdgeInsets.zero,
-          title: Container (
+          title: Container(
             padding: const EdgeInsets.all(8),
-            child:  Text('ALERT !!', style: Theme.of(context).primaryTextTheme.headlineSmall),
+            child: Text('ALERT !!',
+                style: Theme.of(context).primaryTextTheme.headlineSmall),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
             ),
@@ -142,48 +144,54 @@ class EditplusAlerts
           ),
           actions: <Widget>[
             OutlinedButton.icon(
-              icon: Icon(Icons.backspace_rounded, color: Colors.red,),
+              icon: Icon(
+                Icons.backspace_rounded,
+                color: Colors.red,
+              ),
               label: const Text("  CANCEL  "),
               onPressed: () {
-                Navigator.of(context).pop();                
+                Navigator.of(context).pop();
               },
             ),
             OutlinedButton.icon(
-              icon: Icon(Icons.done_sharp, color: Colors.green,),
+              icon: Icon(
+                Icons.done_sharp,
+                color: Colors.green,
+              ),
               label: const Text("  OK  "),
               onPressed: () {
-                Navigator.of(context).pop(confirmCallBack != null ? confirmCallBack(): null);
+                Navigator.of(context)
+                    .pop(confirmCallBack != null ? confirmCallBack() : null);
               },
-            ),            
+            ),
           ],
         );
       },
     );
-
   }
 
-  static void showChoiceDialog(BuildContext context, String message, List options, {Function? confirmChoice}) 
-  {
-
+  static void showChoiceDialog(
+      BuildContext context, String message, List options,
+      {Function? confirmChoice}) {
     var _choiceOfProductType = "STANDARD PRODUCT";
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-
         return AlertDialog(
           titlePadding: EdgeInsets.zero,
-          title: Container (
+          title: Container(
             padding: const EdgeInsets.all(8),
-            child:  Text('SELECT !', style: Theme.of(context).primaryTextTheme.headlineSmall),
+            child: Text('SELECT !',
+                style: Theme.of(context).primaryTextTheme.headlineSmall),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
             ),
             width: 360,
           ),
           content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return SizedBox(
+              builder: (BuildContext context, StateSetter setState) {
+            return SizedBox(
                 width: 360,
                 child: Column(
                   children: <Widget>[
@@ -196,40 +204,110 @@ class EditplusAlerts
                         _choiceOfProductType = productType.toString();
                         setState(() {});
                       },
-                    ),                
+                    ),
                     RadioListTile<String>(
                       title: const Text('OWN PRODUCT'),
                       value: "OWN PRODUCT",
                       groupValue: _choiceOfProductType,
                       onChanged: (productType) {
                         _choiceOfProductType = productType.toString();
-                        setState(() {});                        
+                        setState(() {});
                       },
                     ),
                   ],
-                )
-              );
-            }
-          ),
+                ));
+          }),
           actions: <Widget>[
             OutlinedButton.icon(
-              icon: Icon(Icons.backspace_rounded, color: Colors.red,),
+              icon: Icon(
+                Icons.backspace_rounded,
+                color: Colors.red,
+              ),
               label: const Text("  CANCEL  "),
               onPressed: () {
-                Navigator.of(context).pop();                
+                Navigator.of(context).pop();
               },
             ),
             OutlinedButton.icon(
-              icon: Icon(Icons.done_sharp, color: Colors.green,),
+              icon: Icon(
+                Icons.done_sharp,
+                color: Colors.green,
+              ),
               label: const Text("  OK  "),
               onPressed: () {
-                Navigator.of(context).pop(confirmChoice != null ? confirmChoice(_choiceOfProductType): null);
+                Navigator.of(context).pop(confirmChoice != null
+                    ? confirmChoice(_choiceOfProductType)
+                    : null);
               },
-            ),            
+            ),
           ],
         );
       },
     );
+  }
 
-  }    
+  static void showInputDialog(BuildContext context,
+      {required String dialogTitle,
+      required String dialogMessage,
+      required String inputLabel,
+      Function? returnInputFunction}) {
+    TextEditingController _tecTextInput = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          titlePadding: EdgeInsets.zero,
+          title: Container(
+            padding: const EdgeInsets.all(8),
+            child: Text(dialogTitle,
+                style: Theme.of(context).primaryTextTheme.headlineSmall),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            width: 360,
+          ),
+          content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return SizedBox(
+                width: 360,
+                child: Column(
+                  children: <Widget>[
+                    Text(dialogMessage),
+                    TextFormField(
+                      controller: _tecTextInput,
+                      decoration: EditPlusUiUtils.getFormTextFieldDecoration(
+                          label: inputLabel, hint: inputLabel),
+                    )
+                  ],
+                ));
+          }),
+          actions: <Widget>[
+            OutlinedButton.icon(
+              icon: Icon(
+                Icons.backspace_rounded,
+                color: Colors.red,
+              ),
+              label: const Text("  CANCEL  "),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            OutlinedButton.icon(
+              icon: Icon(
+                Icons.done_sharp,
+                color: Colors.green,
+              ),
+              label: const Text("  OK  "),
+              onPressed: () {
+                Navigator.of(context).pop(returnInputFunction != null
+                    ? returnInputFunction(_tecTextInput.text)
+                    : null);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
