@@ -22,6 +22,31 @@ class EditplusLocalStorage {
     return directoryPathAsString;
   }
 
+  Future<List<FileSystemEntity>> getFilesList(String? folderPath) async {
+    Directory thisDir = Directory.fromUri(Uri.file("."));
+
+    if (folderPath == null) {
+      final fileFromLocalPath = await _localPathAsString.then((homeDir) {
+        print("The home dir is $homeDir");
+        thisDir = Directory.fromUri(Uri.file(homeDir));
+      });
+    } else {
+      thisDir = Directory.fromUri(Uri.file(folderPath));
+    }
+
+    List<FileSystemEntity> entities = await thisDir.list().toList();
+
+    return entities;
+  }
+
+  Future<String> getParentDirectoryofDirectory(String directoryPath) async {
+    Directory thisDir = Directory.fromUri(Uri.file(directoryPath));
+
+    // print("\nThe entity chosen is $thisDir from path $directoryPath");
+
+    return thisDir.parent.path;
+  }
+
   /*Future<File> get _localFile async {
     final pathAsFile = await _localPathAsURI.then((localPath)
     {
@@ -96,7 +121,6 @@ class EditplusLocalStorage {
     } catch (errormessage) {
       print("Attempt to get the local file leads to the error $errormessage");
     }
-    ;
 
     return File(fileName);
   }
@@ -126,5 +150,18 @@ class EditplusLocalStorage {
         return file.writeAsString('$contents');
       });
     }
+  }
+
+  static String fileNameOnlyFromPath(String path) {
+    if (path.contains("\\")) {
+      var filename = path.substring(path.lastIndexOf("\\") + 1);
+      return filename;
+    }
+    if (path.contains("/")) {
+      var filename = path.substring(path.lastIndexOf("/") + 1);
+      return filename;
+    }
+
+    return path;
   }
 }
