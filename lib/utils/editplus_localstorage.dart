@@ -25,9 +25,9 @@ class EditplusLocalStorage {
   Future<List<FileSystemEntity>> getFilesList(String? folderPath) async {
     Directory thisDir = Directory.fromUri(Uri.file("."));
 
-    if (folderPath == null) {
+    if (folderPath == null || folderPath == ".") {
       final fileFromLocalPath = await _localPathAsString.then((homeDir) {
-        print("The home dir is $homeDir");
+        // print("The home dir is $homeDir");
         thisDir = Directory.fromUri(Uri.file(homeDir));
       });
     } else {
