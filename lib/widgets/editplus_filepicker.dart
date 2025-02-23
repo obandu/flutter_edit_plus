@@ -45,7 +45,7 @@ class EditplusFilepicker {
           ),
           content: SizedBox(
               width: 480,
-              height: 310,
+              height: 340,
               child: StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState) {
                 _setState = setState;
@@ -53,10 +53,23 @@ class EditplusFilepicker {
                 return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      EditPlusUiUtils.getStyledText(
-                          size: 12,
-                          weight: FontWeight.bold,
-                          text: chosenFolderName),
+                      Row(children: [
+                        Expanded(
+                          flex: 1,
+                          child: EditPlusUiUtils.getStyledText(
+                              size: 14,
+                              weight: FontWeight.bold,
+                              text: "FOLDER"),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: EditPlusUiUtils.getStyledText(
+                            size: 14,
+                            weight: FontWeight.normal,
+                            text: chosenFolderName,
+                          ),
+                        )
+                      ]),
                       Divider(),
                       Container(
                           width: 480,
@@ -120,7 +133,7 @@ class EditplusFilepicker {
           ),
           content: SizedBox(
               width: 480,
-              height: 360,
+              height: 380,
               child: StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState) {
                 _setState = setState;
@@ -129,15 +142,18 @@ class EditplusFilepicker {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(children: [
-                        EditPlusUiUtils.getStyledText(
-                            size: 12,
-                            weight: FontWeight.bold,
-                            text: "SAVE FILE NAME"),
+                        Expanded(
+                          flex: 1,
+                          child: EditPlusUiUtils.getStyledText(
+                              size: 14,
+                              weight: FontWeight.bold,
+                              text: "FILE NAME"),
+                        ),
                         SizedBox(
                           width: 3,
                         ),
                         Flexible(
-                          flex: 1,
+                          flex: 3,
                           child: TextFormField(
                             controller: _tecTextFileNameInput,
                             decoration:
@@ -146,10 +162,26 @@ class EditplusFilepicker {
                           ),
                         )
                       ]),
-                      EditPlusUiUtils.getStyledText(
-                          size: 12,
-                          weight: FontWeight.bold,
-                          text: chosenFolderName),
+                      SizedBox(
+                        height: 3,
+                      ),
+                      Row(children: [
+                        Expanded(
+                          flex: 1,
+                          child: EditPlusUiUtils.getStyledText(
+                              size: 14,
+                              weight: FontWeight.bold,
+                              text: "FOLDER"),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: EditPlusUiUtils.getStyledText(
+                            size: 14,
+                            weight: FontWeight.normal,
+                            text: chosenFolderName,
+                          ),
+                        )
+                      ]),
                       Divider(),
                       Container(
                           width: 480,
@@ -181,7 +213,8 @@ class EditplusFilepicker {
               label: const Text("  OK  "),
               onPressed: () {
                 Navigator.of(context).pop(doSaveFunction != null
-                    ? doSaveFunction(_tecTextFileNameInput.text)
+                    ? doSaveFunction(
+                        chosenFolderName, _tecTextFileNameInput.text)
                     : null);
               },
             ),
@@ -215,7 +248,10 @@ class EditplusFilepicker {
       icon: Icon(Icons.arrow_upward_sharp),
     ));
 
-    localStorage.getFilesList(chosenFolderName).then((filesList) {
+    localStorage.getFilesList(chosenFolderName).then((filesListData) {
+      List<FileSystemEntity> filesList = filesListData["FILESYTEMENTITIES"];
+      Directory currentDirectory = filesListData["CURRENTDIRECTORY"];
+      // chosenFolderName = currentDirectory.path.toString();
       filesOnly = [];
       directoriesOnly = [];
 
@@ -247,10 +283,6 @@ class EditplusFilepicker {
           }
         }
       }
-
-      fileFolderList.addAll(directoriesOnly);
-      fileFolderList.addAll(filesOnly);
-
       _setState?.call(() {});
     });
 

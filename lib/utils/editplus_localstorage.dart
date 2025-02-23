@@ -22,7 +22,7 @@ class EditplusLocalStorage {
     return directoryPathAsString;
   }
 
-  Future<List<FileSystemEntity>> getFilesList(String? folderPath) async {
+  Future<Map<String, dynamic>> getFilesList(String? folderPath) async {
     Directory thisDir = Directory.fromUri(Uri.file("."));
 
     if (folderPath == null || folderPath == ".") {
@@ -36,7 +36,7 @@ class EditplusLocalStorage {
 
     List<FileSystemEntity> entities = await thisDir.list().toList();
 
-    return entities;
+    return {"FILESYTEMENTITIES": entities, "CURRENTDIRECTORY": thisDir};
   }
 
   Future<String> getParentDirectoryofDirectory(String directoryPath) async {

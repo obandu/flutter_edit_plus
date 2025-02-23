@@ -267,11 +267,12 @@ class EditplusAlerts {
             ),
             width: 360,
           ),
-          content: StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-            return Container(
-                width: 360,
-                child: Column(
+          content: SizedBox(
+              width: 480,
+              height: 360,
+              child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                return Column(
                   children: <Widget>[
                     Text(dialogMessage),
                     SizedBox(height: 10),
@@ -281,8 +282,8 @@ class EditplusAlerts {
                           label: inputLabel, hint: inputLabel),
                     )
                   ],
-                ));
-          }),
+                );
+              })),
           actions: <Widget>[
             OutlinedButton.icon(
               icon: Icon(
