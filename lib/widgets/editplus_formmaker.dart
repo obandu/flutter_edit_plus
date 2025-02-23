@@ -53,7 +53,7 @@ class EditplusFormMaker {
     var formSectionLabel = (formSectionStructure["LABEL"] == null)
         ? ""
         : formSectionStructure["LABEL"];
-    formSectionItems.add(EditPlusUiUtils.getBoldLabelText(formSectionLabel));
+    // formSectionItems.add(EditPlusUiUtils.getBoldLabelText(formSectionLabel));
 
     List formSectionElements = (formSectionStructure["ELEMENTS"] == null)
         ? []
@@ -67,10 +67,20 @@ class EditplusFormMaker {
       formSectionItems.add(formSElementWidget);
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: formSectionItems,
-    );
+    if (formSectionItems.isEmpty) {
+      formSectionItems.add(EditPlusUiUtils.getStyledText(
+          text: "No elements in this section",
+          weight: FontWeight.normal,
+          size: 16.0,
+          color: Colors.orangeAccent));
+    }
+
+    return EditplusFormsection(
+        title: formSectionLabel,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: formSectionItems,
+        ));
   }
 
   Widget? renderFormElement(var formElement) {
@@ -94,7 +104,7 @@ class EditplusFormMaker {
 
     switch (formElementType) {
       case "SECTION":
-        renderFormSection(formElement);
+        returnWidget = renderFormSection(formElement);
         break;
       case "TEXTFIELD":
         returnWidget = TextFormField(
@@ -113,7 +123,7 @@ class EditplusFormMaker {
             onPressed: callFunction, child: Text(formElement["LABEL"]));
         break;
       default:
-        EditPlusUiUtils.getBoldLabelText(
+        returnWidget = EditPlusUiUtils.getBoldLabelText(
             "Element of type ${formElement["TYPE"]} not yet factored in form maker");
     }
 

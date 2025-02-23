@@ -98,6 +98,99 @@ class EditplusFilepicker {
     );
   }
 
+  void showFileSaverDialog(BuildContext context,
+      {required Function doSaveFunction}) {
+    TextEditingController _tecTextFileNameInput = TextEditingController();
+    selectFileFunction = doSaveFunction;
+
+    getCurrentFolderList(null, context);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          titlePadding: EdgeInsets.zero,
+          title: Container(
+            width: 360,
+            padding: const EdgeInsets.all(3),
+            child: Text(dialogTitle,
+                style: Theme.of(context).primaryTextTheme.headlineSmall),
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                border: Border.all(color: Colors.grey, width: 2)),
+          ),
+          content: SizedBox(
+              width: 480,
+              height: 360,
+              child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                _setState = setState;
+                print("Chosen folder name is $chosenFolderName");
+                return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                        EditPlusUiUtils.getStyledText(
+                            size: 12,
+                            weight: FontWeight.bold,
+                            text: "SAVE FILE NAME"),
+                        SizedBox(
+                          width: 3,
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: TextFormField(
+                            controller: _tecTextFileNameInput,
+                            decoration:
+                                EditPlusUiUtils.getFormTextFieldDecoration(
+                                    label: "FILE NAME", hint: "FILE NAME"),
+                          ),
+                        )
+                      ]),
+                      EditPlusUiUtils.getStyledText(
+                          size: 12,
+                          weight: FontWeight.bold,
+                          text: chosenFolderName),
+                      Divider(),
+                      Container(
+                          width: 480,
+                          height: 240,
+                          child: SingleChildScrollView(
+                              child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: fileFolderList,
+                          ))),
+                      Divider()
+                    ]);
+              })),
+          actions: <Widget>[
+            OutlinedButton.icon(
+              icon: Icon(
+                Icons.backspace_rounded,
+                color: Colors.red,
+              ),
+              label: const Text("  CANCEL  "),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            OutlinedButton.icon(
+              icon: Icon(
+                Icons.done_sharp,
+                color: Colors.green,
+              ),
+              label: const Text("  OK  "),
+              onPressed: () {
+                Navigator.of(context).pop(doSaveFunction != null
+                    ? doSaveFunction(_tecTextFileNameInput.text)
+                    : null);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void getCurrentFolderList(String? folderName, BuildContext dialogContext) {
     fileFolderList = [];
     var filesOnly = <Widget>[];

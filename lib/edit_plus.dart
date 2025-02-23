@@ -15,6 +15,7 @@ part 'widgets/editplus_stringdropdown.dart';
 part 'widgets/editplus_datatable.dart';
 part 'widgets/pretty_datatable.dart';
 part 'widgets/editplus_formmaker.dart';
+part 'widgets/editplus_formsection.dart';
 part 'widgets/editplus_filepicker.dart';
 part 'widgets/editplus_text_input.dart';
 part 'widgets/editplus_utils.dart';

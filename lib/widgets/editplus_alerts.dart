@@ -269,11 +269,12 @@ class EditplusAlerts {
           ),
           content: StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
-            return SizedBox(
+            return Container(
                 width: 360,
                 child: Column(
                   children: <Widget>[
                     Text(dialogMessage),
+                    SizedBox(height: 10),
                     TextFormField(
                       controller: _tecTextInput,
                       decoration: EditPlusUiUtils.getFormTextFieldDecoration(
