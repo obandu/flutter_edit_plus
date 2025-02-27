@@ -23,26 +23,34 @@ class EditplusLocalStorage {
   }
 
   Future<Map<String, dynamic>> getFilesList(String? folderPath) async {
+    String errorMessage = "NONE";
     Directory thisDir = Directory.fromUri(Uri.file("."));
+    List<FileSystemEntity> entities = [];
 
-    if (folderPath == null || folderPath == ".") {
-      final fileFromLocalPath = await _localPathAsString.then((homeDir) {
-        // print("The home dir is $homeDir");
+    try {
+      if (folderPath == null || folderPath == ".") {
+        final homeDir = await _localPathAsString;
         thisDir = Directory.fromUri(Uri.file(homeDir));
-      });
-    } else {
-      thisDir = Directory.fromUri(Uri.file(folderPath));
+      } else {
+        thisDir = Directory.fromUri(Uri.file(folderPath));
+      }
+
+      print("The home dir is $thisDir");
+      entities = await thisDir.list().toList();
+    } catch (ex) {
+      errorMessage = "Exception or Error : ${ex.toString()}";
     }
-
-    List<FileSystemEntity> entities = await thisDir.list().toList();
-
-    return {"FILESYTEMENTITIES": entities, "CURRENTDIRECTORY": thisDir};
+    return {
+      "FILESYTEMENTITIES": entities,
+      "CURRENTDIRECTORY": thisDir,
+      "ERRORMESSAGE": errorMessage
+    };
   }
 
-  Future<String> getParentDirectoryofDirectory(String directoryPath) async {
+  String getParentDirectoryofDirectory(String directoryPath) {
     Directory thisDir = Directory.fromUri(Uri.file(directoryPath));
 
-    // print("\nThe entity chosen is $thisDir from path $directoryPath");
+    print("\nThe entity chosen is $thisDir from path $directoryPath");
 
     return thisDir.parent.path;
   }
@@ -140,7 +148,7 @@ class EditplusLocalStorage {
     }
   }
 
-  Future<File> writeData(String contents) async {
+  Future<File> writeStringData(String contents) async {
     if (fullFilePathAsGiven == true) {
       return await _fileFromFullPath.then((file) {
         return file.writeAsString('$contents');

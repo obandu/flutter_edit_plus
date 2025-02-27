@@ -212,10 +212,16 @@ class EditplusFilepicker {
               ),
               label: const Text("  OK  "),
               onPressed: () {
-                Navigator.of(context).pop(doSaveFunction != null
-                    ? doSaveFunction(
-                        chosenFolderName, _tecTextFileNameInput.text)
-                    : null);
+                if (_tecTextFileNameInput.text.isEmpty) {
+                  EditplusAlerts.showAlertDialog(context,
+                      message: "Please give a file name to save",
+                      title: "FILE NAME REQUIRED");
+                } else {
+                  Navigator.of(context).pop(doSaveFunction != null
+                      ? doSaveFunction(
+                          chosenFolderName, _tecTextFileNameInput.text)
+                      : null);
+                }
               },
             ),
           ],
@@ -229,28 +235,28 @@ class EditplusFilepicker {
     var filesOnly = <Widget>[];
     var directoriesOnly = <Widget>[];
 
-    // initial and default folder name = "."
-    if (folderName != null) {
-      chosenFolderName = folderName;
-    } else {
-      chosenFolderName = ".";
-    }
-
     fileFolderList.add(TextButton.icon(
       onPressed: () {
-        localStorage
-            .getParentDirectoryofDirectory(chosenFolderName)
-            .then((parentDirectory) {
-          getCurrentFolderList(parentDirectory, dialogContext);
-        });
+        var parentDirectory =
+            localStorage.getParentDirectoryofDirectory(chosenFolderName);
+        getCurrentFolderList(parentDirectory.toString(), dialogContext);
       },
       label: Text(" .."),
       icon: Icon(Icons.arrow_upward_sharp),
     ));
 
-    localStorage.getFilesList(chosenFolderName).then((filesListData) {
+    localStorage.getFilesList(folderName).then((filesListData) {
       List<FileSystemEntity> filesList = filesListData["FILESYTEMENTITIES"];
       Directory currentDirectory = filesListData["CURRENTDIRECTORY"];
+      String errorMessage = filesListData["ERRORMESSAGE"];
+
+      if (errorMessage != "NONE") {
+        EditplusAlerts.showAlertDialog(dialogContext,
+            message: errorMessage, title: "ERROR !");
+        return;
+      }
+      print(
+          "\nReturned data is is ${filesList.length} from path $currentDirectory");
       // chosenFolderName = currentDirectory.path.toString();
       filesOnly = [];
       directoriesOnly = [];
@@ -283,10 +289,12 @@ class EditplusFilepicker {
           }
         }
       }
+
+      chosenFolderName = currentDirectory.path.toString();
+      fileFolderList.addAll(directoriesOnly);
+      fileFolderList.addAll(filesOnly);
       _setState?.call(() {});
     });
-
-    // return fileFolderList;
   }
 
   selectFile(BuildContext dialogContext) {
