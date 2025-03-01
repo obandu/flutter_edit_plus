@@ -12,14 +12,15 @@ class EditplusLocalStorage {
       required this.fullFilePathAsGiven,
       this.initialStoredValue});
 
-  Future<String> get _localPathAsString async {
-    final directoryPathAsString =
-        await getApplicationDocumentsDirectory().then((appdir) {
-      print("1. The application directory As String is ${appdir}\n");
-      return appdir.path;
-    });
+  /**
+   * Private Utility function to get the application's or system's "DOCUMENTS" directory.
+   * 
+   * The default save location for the given user on the system
+   */
+  Future<String> get _documentHomeDirectory async {
+    final documentHomeDirectory = await getApplicationDocumentsDirectory();
 
-    return directoryPathAsString;
+    return documentHomeDirectory.path;
   }
 
   Future<Map<String, dynamic>> getFilesList(String? folderPath) async {
@@ -29,7 +30,7 @@ class EditplusLocalStorage {
 
     try {
       if (folderPath == null || folderPath == ".") {
-        final homeDir = await _localPathAsString;
+        final homeDir = await _documentHomeDirectory;
         thisDir = Directory.fromUri(Uri.file(homeDir));
       } else {
         thisDir = Directory.fromUri(Uri.file(folderPath));
@@ -82,7 +83,7 @@ class EditplusLocalStorage {
   } */
 
   Future<File> get _fileFromLocalPath async {
-    final fileFromLocalPath = await _localPathAsString.then((localPath) {
+    final fileFromLocalPath = await _documentHomeDirectory.then((localPath) {
       print("The local path is $localPath and URI is $localPath/$fileName");
       String localFileName = '$localPath/$fileName';
       if (localPath.contains("\\")) {

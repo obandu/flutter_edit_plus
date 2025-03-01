@@ -137,7 +137,7 @@ class EditplusFilepicker {
               child: StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState) {
                 _setState = setState;
-                print("Chosen folder name is $chosenFolderName");
+                // print("Chosen folder name is $chosenFolderName");
                 return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -299,7 +299,7 @@ class EditplusFilepicker {
 
   selectFile(BuildContext dialogContext) {
     Navigator.of(dialogContext).pop(selectFileFunction != null
-        ? selectFileFunction?.call(chosenFileName)
+        ? selectFileFunction?.call(chosenFolderName, chosenFileName)
         : null);
   }
 }
