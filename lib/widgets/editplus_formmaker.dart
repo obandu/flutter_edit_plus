@@ -112,6 +112,10 @@ class EditplusFormMaker {
               label: formElement["LABEL"], hint: formElement["LABEL"]),
         );
         break;
+      case "LABEL":
+        returnWidget = EditPlusUiUtils.getStyledText(
+            size: 16, text: formElement["TEXT"], weight: FontWeight.bold);
+        break;
       case "DROPDOWN":
         returnWidget = EditPlusStringDropdown(
             hintText: formElement["LABEL"],
@@ -136,9 +140,20 @@ class EditplusFormMaker {
       formStructure = jsonDecode(formBodyAsJSON);
     } catch (ex) {
       print("Error is $ex");
-      String errorString =
-          "{\"FORMNAME\": \"ERROR\", \"SIZE\": 30, \"MESSAGE\": \"Error at evaluate form is : Format Exception\"}";
-      formStructure = jsonDecode(errorString);
+
+      var elementMap = {};
+      elementMap["TEXT"] =
+          "Error evaluating form JSON. There is a format exception. The message is below:\n $ex";
+      elementMap["TYPE"] = "LABEL";
+      elementMap["NAME"] = "LABEL_01";
+
+      var elementList = [elementMap];
+
+      formStructure["FORMNAME"] = "ERROR MESSAGE";
+      formStructure["ELEMENTS"] = elementList;
+
+      // print("Errorstring is $errorString");
+      // formStructure = jsonDecode(errorString);
     }
 
     return formStructure;

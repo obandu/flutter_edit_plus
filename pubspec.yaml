@@ -1,11 +1,13 @@
 name: edit_plus
 description: Useful editing widgets that enhance built-in flutter widgets.
-version: 1.03.02
+version: 1.03.09
 author: Jonas Obara
 
 # CHANGELOG
 # 08.01.25 - Added UiUtils - Several utilities for working with flutter UI
 # 13.02.25 - Added EditplusLocalstorage - Several utilities for working with local files
+# 09.03.25 - Added EditplusCollectionUtils - Several utilities for working with dart collections
+# 09.03.25 - Moved EditplusUtils to Utils folder
 
 environment:
   sdk: '>=3.2.3 <4.0.0'

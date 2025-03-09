@@ -59,4 +59,12 @@ class EditPlusUtils {
       return 0;
     }
   }
+
+  static double getDouble(String doublevalue) {
+    try {
+      return double.parse(doublevalue);
+    } catch (ex) {
+      return 0;
+    }
+  }
 }
