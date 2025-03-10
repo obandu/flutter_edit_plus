@@ -67,4 +67,14 @@ class EditPlusUtils {
       return 0;
     }
   }
+
+  static String numPad(int num, int length) {
+    String padded = num.toString().padLeft(length, '0');
+    return padded;
+  }
+
+  static String stringPadWithNumber(String stringItem, int length) {
+    String padded = stringItem.padLeft(length, '0');
+    return padded;
+  }
 }

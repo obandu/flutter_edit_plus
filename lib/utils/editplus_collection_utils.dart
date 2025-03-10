@@ -58,4 +58,31 @@ class EditplusCollectionUtils {
 
     return integerValues;
   }
+
+  static List<int> integerToBitList({required int value, int? bitMapWidth}) {
+    List<int> intList = [];
+    if (bitMapWidth == null) {
+      bitMapWidth = 32;
+    }
+
+    // Convert integer to a string of bits
+    String bitString = value.toRadixString(2);
+    if (bitString.length > bitMapWidth) {
+      bitString = bitString.substring(bitString.length - bitMapWidth);
+    } else {
+      bitString = bitString.padLeft(bitMapWidth, '0');
+    }
+
+    // Split the string into individual bits
+    List<String> bitsList = bitString.split('');
+
+    // Print the list of individual bits
+    print(bitsList);
+
+    for (var bitAsString in bitsList) {
+      intList.add(EditPlusUtils.getInteger(bitAsString));
+    }
+
+    return intList;
+  }
 }
