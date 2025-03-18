@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
+part of edit_plus;
 
-class NuTableColumn {
+class EditplusNuTableColumn {
   final String columnLabel;
   final String columnName;
 
   double? columnWidth;
 
-  NuTableColumn(
+  EditplusNuTableColumn(
       {required this.columnName, required this.columnLabel, this.columnWidth});
 
   Widget getView() {

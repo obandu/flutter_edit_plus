@@ -3,7 +3,7 @@ part of edit_plus;
 class EditplusNuTable extends StatefulWidget {
   final double tableOuterMargin;
   final double? viewPortSize;
-  final List<NuTableColumn> tableColumns;
+  final List<EditplusNuTableColumn> tableColumns;
   final List tableRows;
 
   const EditplusNuTable(
@@ -43,7 +43,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.sizeOf(context).width;
-    print("The widths are screen: $screenWidth and viewport $tableWidth");
+    // print("The widths are screen: $screenWidth and viewport $tableWidth");
     return Padding(
       padding: EdgeInsets.all(widget.tableOuterMargin),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -72,7 +72,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
           SingleChildScrollView(
               scrollDirection: Axis.vertical,
               controller: ScrollController(),
-              child: NuTableBody())
+              child: EditplusNuTableBody())
         ]),
       ),
     );

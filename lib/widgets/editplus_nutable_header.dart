@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-
-import 'nutable_column.dart';
+part of edit_plus;
 
 class NuTableHeader extends StatelessWidget {
-  final List<NuTableColumn> tableColumns;
+  final List<EditplusNuTableColumn> tableColumns;
   double? tableWidth;
 
   NuTableHeader({this.tableWidth, required this.tableColumns});
