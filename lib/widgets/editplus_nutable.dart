@@ -4,7 +4,9 @@ class EditplusNuTable extends StatefulWidget {
   final double tableOuterMargin;
   final double? viewPortSize;
   final List<EditplusNuTableColumn> tableColumns;
-  final List tableRows;
+  final List<Map> tableRows;
+  double? rowSpacing;
+  double? columnSpacing;
 
   const EditplusNuTable(
       {super.key,
@@ -72,7 +74,10 @@ class EditplusNuTableState extends State<EditplusNuTable> {
           SingleChildScrollView(
               scrollDirection: Axis.vertical,
               controller: ScrollController(),
-              child: EditplusNuTableBody())
+              child: EditplusNuTableBody(
+                tableColumns: widget.tableColumns,
+                tableRowsContent: widget.tableRows,
+              ))
         ]),
       ),
     );

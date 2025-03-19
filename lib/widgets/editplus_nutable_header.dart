@@ -3,8 +3,10 @@ part of edit_plus;
 class NuTableHeader extends StatelessWidget {
   final List<EditplusNuTableColumn> tableColumns;
   double? tableWidth;
+  double? columnSpacing;
 
-  NuTableHeader({this.tableWidth, required this.tableColumns});
+  NuTableHeader(
+      {this.tableWidth, required this.tableColumns, this.columnSpacing});
 
   @override
   Widget build(BuildContext context) {
