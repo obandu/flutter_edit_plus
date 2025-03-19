@@ -8,7 +8,7 @@ class EditplusNuTable extends StatefulWidget {
   double? rowSpacing;
   double? columnSpacing;
 
-  const EditplusNuTable(
+  EditplusNuTable(
       {super.key,
       required this.tableOuterMargin,
       this.viewPortSize,
