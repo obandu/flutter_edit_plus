@@ -3,7 +3,7 @@ part of edit_plus;
 class NuTableHeader extends StatelessWidget {
   final List<EditplusNuTableColumn> tableColumns;
   double? tableWidth;
-  double? columnSpacing;
+  double? columnSpacing = 3;
 
   NuTableHeader(
       {this.tableWidth, required this.tableColumns, this.columnSpacing});
@@ -23,6 +23,7 @@ class NuTableHeader extends StatelessWidget {
     }
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: columnList,
     );
   }

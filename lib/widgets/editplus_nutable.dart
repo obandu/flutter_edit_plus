@@ -7,6 +7,7 @@ class EditplusNuTable extends StatefulWidget {
   final List<Map> tableRows;
   double? rowSpacing;
   double? columnSpacing;
+  List<Color> bandedRows = [Colors.white, Colors.orangeAccent];
 
   EditplusNuTable(
       {super.key,
@@ -65,7 +66,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
       controller: tableWidthScrollController,
       child: ConstrainedBox(
         constraints: BoxConstraints(minWidth: min(tableWidth, screenWidth)),
-        child: Column(children: [
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SizedBox(
             height: 3,
           ),
@@ -77,6 +78,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
               child: EditplusNuTableBody(
                 tableColumns: widget.tableColumns,
                 tableRowsContent: widget.tableRows,
+                bandedRowColors: widget.bandedRows,
               ))
         ]),
       ),
