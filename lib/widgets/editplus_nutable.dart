@@ -21,7 +21,8 @@ class EditplusNuTable extends StatefulWidget {
 }
 
 class EditplusNuTableState extends State<EditplusNuTable> {
-  ScrollController tableWidthScrollController = ScrollController();
+  ScrollController tableHeadWidthScrollController = ScrollController(),
+      tableBodyWidthScrollController = ScrollController();
   double tableWidthScrollOffset = 0.0;
   late double screenWidth;
 
@@ -49,21 +50,87 @@ class EditplusNuTableState extends State<EditplusNuTable> {
     // print("The widths are screen: $screenWidth and viewport $tableWidth");
     return Padding(
       padding: EdgeInsets.all(widget.tableOuterMargin),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        (screenWidth < tableWidth) ? getLeftScroller() : Container(),
-        Expanded(
-          flex: 1,
-          child: getTableArea(),
-        ),
-        (screenWidth < tableWidth) ? getRightScroller() : Container(),
+      child: Column(children: [
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          (screenWidth < tableWidth) ? getLeftScroller() : Container(),
+          Expanded(
+            flex: 1,
+            child: getTableHeaderRow(),
+          ),
+          (screenWidth < tableWidth) ? getRightScroller() : Container(),
+        ]),
+        /* Expanded(
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            (screenWidth < tableWidth) ? getLeftScroller() : Container(),
+            Expanded(flex: 1, child: getTableBodyRow()),
+            (screenWidth < tableWidth) ? getRightScroller() : Container(),
+          ]),
+        ), */
+        Row(children: [
+          (screenWidth < tableWidth) ? Container(width: 50) : Container(),
+          Expanded(
+              child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  controller: tableBodyWidthScrollController,
+                  child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                          // minWidth: min(tableWidth, screenWidth),
+                          minHeight: 200,
+                          maxHeight: 400),
+                      child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          controller: ScrollController(),
+                          child: EditplusNuTableBody(
+                            tableColumns: widget.tableColumns,
+                            tableRowsContent: widget.tableRows,
+                            bandedRowColors: widget.bandedRows,
+                          ))))),
+          (screenWidth < tableWidth) ? Container(width: 50) : Container(),
+        ]),
+        Row(
+          children: [Text("This is the bottom of the table")],
+        )
       ]),
     );
+  }
+
+  Widget getTableHeaderRow() {
+    return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: tableHeadWidthScrollController,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minWidth: min(tableWidth, screenWidth)),
+          child: NuTableHeader(
+              tableColumns: widget.tableColumns, tableWidth: tableWidth),
+        ));
+  }
+
+  Widget getTableBodyRow() {
+    return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: tableBodyWidthScrollController,
+        child: ConstrainedBox(
+            constraints: BoxConstraints(
+                minWidth: min(tableWidth, screenWidth),
+                minHeight: 200,
+                maxHeight: 400),
+            child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                controller: ScrollController(),
+                child: SizedBox(
+                    height: 400,
+                    // constraints: BoxConstraints(minHeight: 200, maxHeight: 400),
+                    child: EditplusNuTableBody(
+                      tableColumns: widget.tableColumns,
+                      tableRowsContent: widget.tableRows,
+                      bandedRowColors: widget.bandedRows,
+                    )))));
   }
 
   Widget getTableArea() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      controller: tableWidthScrollController,
+      controller: tableBodyWidthScrollController,
       child: ConstrainedBox(
         constraints: BoxConstraints(minWidth: min(tableWidth, screenWidth)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -75,11 +142,13 @@ class EditplusNuTableState extends State<EditplusNuTable> {
           SingleChildScrollView(
               scrollDirection: Axis.vertical,
               controller: ScrollController(),
-              child: EditplusNuTableBody(
-                tableColumns: widget.tableColumns,
-                tableRowsContent: widget.tableRows,
-                bandedRowColors: widget.bandedRows,
-              ))
+              child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: 200),
+                  child: EditplusNuTableBody(
+                    tableColumns: widget.tableColumns,
+                    tableRowsContent: widget.tableRows,
+                    bandedRowColors: widget.bandedRows,
+                  )))
         ]),
       ),
     );
@@ -90,7 +159,10 @@ class EditplusNuTableState extends State<EditplusNuTable> {
       onPressed: () {
         tableWidthScrollOffset =
             (tableWidthScrollOffset > 0) ? (tableWidthScrollOffset - 50.0) : 0;
-        tableWidthScrollController.jumpTo(
+        tableHeadWidthScrollController.jumpTo(
+          tableWidthScrollOffset,
+        );
+        tableBodyWidthScrollController.jumpTo(
           tableWidthScrollOffset,
         );
       },
@@ -107,9 +179,12 @@ class EditplusNuTableState extends State<EditplusNuTable> {
     return ElevatedButton.icon(
       onPressed: () {
         // get maxScrollExtent
-        ScrollPosition scrollPosition =
-            tableWidthScrollController.positions.first;
-        double maxScrollExtent = scrollPosition.maxScrollExtent;
+        ScrollPosition tableHeadScrollPosition =
+            tableHeadWidthScrollController.positions.first;
+        ScrollPosition tableBodyScrollPosition =
+            tableHeadWidthScrollController.positions.first;
+
+        double maxScrollExtent = tableHeadScrollPosition.maxScrollExtent;
         tableWidthScrollOffset = (tableWidthScrollOffset < maxScrollExtent)
             ? (tableWidthScrollOffset +
                 min(
@@ -117,9 +192,13 @@ class EditplusNuTableState extends State<EditplusNuTable> {
                   (maxScrollExtent - tableWidthScrollOffset),
                 ))
             : maxScrollExtent;
-        tableWidthScrollController.jumpTo(
+        tableHeadWidthScrollController.jumpTo(
           tableWidthScrollOffset,
-        ); // .animateTo(tableWidthScrollOffset, duration: Duration(seconds: 1), curve: Curves);
+        );
+        tableBodyWidthScrollController.jumpTo(
+          tableWidthScrollOffset,
+        );
+        // .animateTo(tableWidthScrollOffset, duration: Duration(seconds: 1), curve: Curves);
         // widget.showMessageFunction("Table width is ${tableWidthScrollController.positions} EXTENT $maxScrollExtent");
       },
       icon: Icon(Icons.arrow_right_sharp),
