@@ -30,6 +30,7 @@ class EditplusNuTableBody extends StatelessWidget {
               enabled: false,
               initialValue: tableRowContent[tableColumn.columnName],
               decoration: EditPlusUiUtils.getFormTextFieldDecoration(),
+              textAlign: getTextAlign(tableColumn.contentAlignment),
             )));
         tableRowWidgets.add(SizedBox(width: 3));
       }
@@ -43,5 +44,17 @@ class EditplusNuTableBody extends StatelessWidget {
     return Column(
       children: tableRows,
     );
+  }
+
+  TextAlign getTextAlign(var alignment) {
+    if (alignment == null) {
+      return TextAlign.start;
+    }
+
+    /*if (alignment.toString().toUpperCase() == "RIGHT") {
+      return TextAlign.end;
+    } */
+
+    return alignment;
   }
 }
