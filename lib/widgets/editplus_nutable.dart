@@ -11,14 +11,19 @@ class EditplusNuTable extends StatefulWidget {
   List<Color> bandedRows = [Colors.white, Colors.orangeAccent];
   final Widget? tableTitle;
 
+  Function? refreshTableFunction;
+  Function? showMessageFunction;
+
   EditplusNuTable(
       {super.key,
       required this.tableOuterMargin,
+      required this.tableColumns,
+      required this.tableRows,
       this.viewPortWidth,
       this.viewPortHeight,
       this.tableTitle,
-      required this.tableColumns,
-      required this.tableRows});
+      this.refreshTableFunction,
+      this.showMessageFunction});
 
   @override
   State<StatefulWidget> createState() => EditplusNuTableState();
@@ -59,7 +64,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.sizeOf(context).width;
-    // print("The widths are screen: $screenWidth and viewport $tableWidth");
+    print("The widths are screen: $screenWidth and viewport $tableWidth");
     return Padding(
       padding: EdgeInsets.all(widget.tableOuterMargin),
       child: SingleChildScrollView(
@@ -214,7 +219,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
       label: Container(),
     );
   }
-  /* 
+
   List<Widget> getHeaderActionButtons() {
     List<Widget> buttonList = [];
 
@@ -249,7 +254,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
           // get table as CSV
           var csvContent = EditPlusUtils.getTableListAsCSV(
             widget.tableRows,
-            widget.columnNames,
+            getColumnNamesAsList(),
           );
           // cannot refresh if in editing mode
           if (getCreateState() == false && getEditState() == false) {
@@ -264,7 +269,31 @@ class EditplusNuTableState extends State<EditplusNuTable> {
     return buttonList;
   }
 
-List getOtherActionButtons() {
+  // copy to clipboard and alert
+  Future<void> _copyToClipboard(var csvContent) async {
+    await Clipboard.setData(ClipboardData(text: csvContent));
+    widget.showMessageFunction!("FULL TABLE DATA COPIED TO CLIPBOARD");
+  }
+
+  bool getCreateState() {
+    return false;
+  }
+
+  bool getEditState() {
+    return false;
+  }
+
+  List<String> getColumnNamesAsList() {
+    var columnNames = <String>[];
+
+    for (var tableColumn in widget.tableColumns) {
+      columnNames.add(tableColumn.columnName);
+    }
+
+    return columnNames;
+  }
+
+/* List getOtherActionButtons() {
     List<Widget> buttonList = [];
     bool creatingRow = widget.tableEditStatus['CREATINGROW'] == null
         ? false

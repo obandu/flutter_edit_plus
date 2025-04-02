@@ -25,4 +25,6 @@ class EditplusNuTableColumn {
             color: Colors.grey,
             child: Text(columnLabel)));
   }
+
+  get columName => columnName;
 }

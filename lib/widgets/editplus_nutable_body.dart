@@ -28,7 +28,7 @@ class EditplusNuTableBody extends StatelessWidget {
             width: tableColumn.columnWidth,
             child: TextFormField(
               enabled: false,
-              initialValue: tableRowContent[tableColumn.columnName],
+              initialValue: tableRowContent[tableColumn.columnName].toString(),
               decoration: EditPlusUiUtils.getFormTextFieldDecoration(),
               textAlign: getTextAlign(tableColumn.contentAlignment),
             )));
