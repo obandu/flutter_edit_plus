@@ -2,7 +2,7 @@ part of edit_plus;
 
 class EditplusNuTable extends StatefulWidget {
   final double tableOuterMargin;
-  final double? viewPortWidth;
+  double viewPortWidth;
   final double? viewPortHeight;
   final List<EditplusNuTableColumn> tableColumns;
   final List<Map> tableRows;
@@ -19,7 +19,7 @@ class EditplusNuTable extends StatefulWidget {
       required this.tableOuterMargin,
       required this.tableColumns,
       required this.tableRows,
-      this.viewPortWidth,
+      required this.viewPortWidth,
       this.viewPortHeight,
       this.tableTitle,
       this.refreshTableFunction,
@@ -42,20 +42,34 @@ class EditplusNuTableState extends State<EditplusNuTable> {
   Widget tableTitle = Text("UNNAMED TABLE");
   // late List<NuTableColumn> tableColumns;
 
+  int page = 0;
+  int pageSize = 20;
+  int _calculatedPages = 1;  
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    (widget.viewPortWidth == null)
-        ? tableWidth = minTableWidth
-        : tableWidth = widget.viewPortWidth!;
+    tableWidth = 0;
 
-    screenWidth = tableWidth;
+    for (EditplusNuTableColumn column in widget.tableColumns) {
+      if (column.columnWidth == null) {
+        tableWidth += (column.defaultColumnWidth + widget.tableOuterMargin);
+      } else {
+        tableWidth += (column.columnWidth! + widget.tableOuterMargin);
+      }
+    }
+
+    tableWidth = max(minTableWidth, tableWidth);
+
+    screenWidth = widget.viewPortWidth;
 
     if (widget.tableTitle != null) {
       tableTitle = widget.tableTitle!;
     }
+
+    _calculatedPages = (tableRows.length ~/ pageSize) + 1;    
     /*for (var tableColumn in widget.tableColumns) {
       tableColumns.add(NuTableColumn(columnLabel: tableColumn.toString()));
     } */
@@ -64,7 +78,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.sizeOf(context).width;
-    print("The widths are screen: $screenWidth and viewport $tableWidth");
+    print("The widths are screen: $screenWidth and tableWidth $tableWidth");
     return Padding(
       padding: EdgeInsets.all(widget.tableOuterMargin),
       child: SingleChildScrollView(
@@ -81,7 +95,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
               : Container(),
           Expanded(
             flex: 1,
-            child: Container(),
+            child: getPageScroller(),
           ),
           (screenWidth < tableWidth + widthScrollOffsetInterval)
               ? getRightScroller()
@@ -117,6 +131,8 @@ class EditplusNuTableState extends State<EditplusNuTable> {
   }
 
   Widget getTableBodyRows() {
+    int lastindex = min(widget.tableRows.length, (page x pageSize)+pageSize);
+    List pageRows = tableRows.subList((page x pageSize), lastindex);
     return Expanded(
         child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -292,6 +308,65 @@ class EditplusNuTableState extends State<EditplusNuTable> {
 
     return columnNames;
   }
+
+  Widget getPageScroller()
+  {
+              getPageUp(),
+              SizedBox(width: 5),
+              getPageNumbersLabel(),
+              SizedBox(width: 5),
+              getPageDown(),    
+  }
+
+  Widget getPageNumbersLabel() {
+    if (_calculatedPages > 1) {
+      return Text("Page ${page + 1} of $_calculatedPages");
+    }
+
+    return Container();
+  }
+
+  Widget getPageUp() {
+    if (_calculatedPages > 1) {
+      return ElevatedButton.icon(
+        onPressed: () {
+          if (page - 1 >= 0) {
+            page = page - 1;
+          }
+          setState(() {});
+        },
+        icon: Icon(Icons.arrow_upward_rounded),
+        style: ElevatedButton.styleFrom(
+          shape: CircleBorder(),
+          padding: EdgeInsets.all(16),
+        ),
+        label: Container(),
+      );
+    }
+
+    return Container();
+  }
+
+  Widget getPageDown() {
+    if (_calculatedPages > 1) {
+      return ElevatedButton.icon(
+        onPressed: () {
+          if (page + 1 < _calculatedPages) {
+            page = page + 1;
+          }
+          setState(() {});
+        },
+        icon: Icon(Icons.arrow_downward_sharp),
+        style: ElevatedButton.styleFrom(
+          shape: CircleBorder(),
+          padding: EdgeInsets.all(16),
+        ),
+        label: Container(),
+      );
+    }
+
+    return Container();
+  }  
 
 /* List getOtherActionButtons() {
     List<Widget> buttonList = [];
