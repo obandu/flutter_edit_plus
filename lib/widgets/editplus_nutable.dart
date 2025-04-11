@@ -43,8 +43,13 @@ class EditplusNuTableState extends State<EditplusNuTable> {
   // late List<NuTableColumn> tableColumns;
 
   int page = 0;
-  int pageSize = 20;
-  int _calculatedPages = 1;  
+  int displayPageSize = 20;
+  int _calculatedPages = 1;
+
+  // table rows
+  List<Widget> tableRows = [];
+  List<TextEditingController> textEditingControllers = [];
+  List<TextFormField> textFormFields = [];
 
   @override
   void initState() {
@@ -69,7 +74,12 @@ class EditplusNuTableState extends State<EditplusNuTable> {
       tableTitle = widget.tableTitle!;
     }
 
-    _calculatedPages = (tableRows.length ~/ pageSize) + 1;    
+    _calculatedPages = (widget.tableRows.length ~/ displayPageSize) + 1;
+
+    // initialise the display matrix
+    // build display matrix
+    createTableVisualFields();
+
     /*for (var tableColumn in widget.tableColumns) {
       tableColumns.add(NuTableColumn(columnLabel: tableColumn.toString()));
     } */
@@ -78,7 +88,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.sizeOf(context).width;
-    print("The widths are screen: $screenWidth and tableWidth $tableWidth");
+    // print("The widths are screen: $screenWidth and tableWidth $tableWidth");
     return Padding(
       padding: EdgeInsets.all(widget.tableOuterMargin),
       child: SingleChildScrollView(
@@ -88,18 +98,25 @@ class EditplusNuTableState extends State<EditplusNuTable> {
             flex: 1,
             child: tableTitle,
           ),
+          Row(
+            children: getHeaderActionButtons(),
+          )
         ]),
         Row(children: [
-          (screenWidth < tableWidth + widthScrollOffsetInterval)
-              ? getLeftScroller()
-              : Container(),
+          Expanded(
+            child: (screenWidth < tableWidth + widthScrollOffsetInterval)
+                ? getLeftScroller()
+                : Container(),
+          ),
           Expanded(
             flex: 1,
             child: getPageScroller(),
           ),
-          (screenWidth < tableWidth + widthScrollOffsetInterval)
-              ? getRightScroller()
-              : Container(),
+          Expanded(
+            child: (screenWidth < tableWidth + widthScrollOffsetInterval)
+                ? getRightScroller()
+                : Container(),
+          ),
         ]),
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(
@@ -131,8 +148,15 @@ class EditplusNuTableState extends State<EditplusNuTable> {
   }
 
   Widget getTableBodyRows() {
-    int lastindex = min(widget.tableRows.length, (page x pageSize)+pageSize);
-    List pageRows = tableRows.subList((page x pageSize), lastindex);
+    var pageRows = <Map>[];
+    if (widget.tableRows.length >= 1) {
+      int lastindex = min(widget.tableRows.length - 1,
+          ((page * displayPageSize) + displayPageSize) - 1);
+      pageRows = widget.tableRows.sublist((page * displayPageSize), lastindex);
+    }
+    // print("Page rows are from ${(page * displayPageSize)} to $lastindex and table length is ${widget.tableRows.length}");
+
+    // print("First page row in this group is ${pageRows.first}");
     return Expanded(
         child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -145,95 +169,209 @@ class EditplusNuTableState extends State<EditplusNuTable> {
                 child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     controller: ScrollController(),
-                    child: EditplusNuTableBody(
-                      tableColumns: widget.tableColumns,
-                      tableRowsContent: widget.tableRows,
-                      bandedRowColors: widget.bandedRows,
-                    )))));
+                    child: pageRows.isEmpty
+                        ? Text("No data for table ..")
+                        : createTableVisualFields()))));
   }
 
-  Widget getTableArea() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      controller: tableBodyWidthScrollController,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minWidth: min(tableWidth, screenWidth)),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SizedBox(
-            height: 3,
-          ),
-          NuTableHeader(
-              tableColumns: widget.tableColumns, tableWidth: tableWidth),
-          SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              controller: ScrollController(),
-              child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: 200),
-                  child: EditplusNuTableBody(
-                    tableColumns: widget.tableColumns,
-                    tableRowsContent: widget.tableRows,
-                    bandedRowColors: widget.bandedRows,
-                  )))
-        ]),
-      ),
+  // getTablePageRows(pageRows)
+
+  /*Widget getTablePageRowsA(var pageRows) {
+    tableRows = <Row>[];
+
+    for (int i = 0; i < displayPageSize; i++) {
+      List<Widget> tableContent = [];
+      for (var tableColumn in widget.tableColumns) {
+        tableContent.add(Text(tableColumn.columnLabel));
+      }
+      tableRows.add(Row(children: tableContent));
+    }
+    return Column(
+      children: tableRows,
     );
+  } */
+
+  createTableVisualFields() {
+    // generate the text editing controllers
+    textEditingControllers = List.generate(
+        (displayPageSize * widget.tableColumns.length),
+        (index) => TextEditingController());
+
+    // generate the text form fields
+    textFormFields = List.generate(
+        (displayPageSize * widget.tableColumns.length),
+        (index) => TextFormField(
+            enabled: false,
+            controller: textEditingControllers[index],
+            decoration: EditPlusUiUtils.getFormTextFieldDecoration()));
+
+    // add text fields to rows
+    var inTableRows = <Row>[];
+
+    var widgetsForRow = <Widget>[];
+    int widgetCount = 0;
+    int tableColumnIndex = 0;
+    for (TextFormField tff in textFormFields) {
+      tableColumnIndex = widgetCount % widget.tableColumns.length;
+
+      if (widgetCount > 0 && tableColumnIndex == 0) {
+        inTableRows.add(Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: widgetsForRow,
+        ));
+        widgetsForRow = <Widget>[];
+      }
+
+      widgetsForRow.add(SizedBox(
+          width: widget.tableColumns[tableColumnIndex].columnWid, child: tff));
+      textEditingControllers[widgetCount].text = widgetCount.toString();
+      widgetsForRow.add(SizedBox(width: widget.tableOuterMargin));
+
+      widgetCount += 1;
+    }
+
+    inTableRows.add(Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: widgetsForRow,
+    ));
+
+    int rowNumber = 0;
+    int numColors = (widget.bandedRows?.length ?? 0);
+    Color rowColor = Colors.white;
+
+    for (Row inRow in inTableRows) {
+      if (widget.bandedRows != null && numColors >= 2) {
+        rowColor = widget.bandedRows![rowNumber % numColors];
+      }
+
+      tableRows.add(Container(
+          padding: EdgeInsets.all(3.0),
+          decoration: BoxDecoration(color: rowColor),
+          child: inRow));
+      tableRows.add(SizedBox(height: widget.tableOuterMargin));
+
+      rowNumber += 1;
+    }
+
+    print(
+        "The columns are ${widget.tableColumns.length} and total fields are ${textFormFields.length} and rows are ${tableRows.length}");
+    return Column(
+      children: tableRows,
+    );
+  }
+
+  Widget getTablePageRows(var pageRows) {
+    var tableRows = <Widget>[];
+    int rowNumber = 0;
+    int numColors = (widget.bandedRows?.length ?? 0);
+    Color rowColor = Colors.white;
+    // print("First page row during Rendering is ${pageRows.first} and colwid = ${widget.tableColumns.first.columnWid.toString()}");
+    for (var tableRowContent in pageRows) {
+      var tableRowWidgets = <Widget>[];
+      if (widget.bandedRows != null && numColors >= 2) {
+        rowColor = widget.bandedRows![rowNumber % numColors];
+      }
+      int colNumber = 0;
+      for (var tableColumn in widget.tableColumns) {
+        tableRowWidgets.add(SizedBox(
+            width: tableColumn.columnWid,
+            child: TextFormField(
+              initialValue: tableRowContent[tableColumn.columnName].toString(),
+              enabled: false,
+              // initialValue: tableRowContent[tableColumn.columnName].toString(),
+              decoration: EditPlusUiUtils.getFormTextFieldDecoration(),
+              textAlign: getTextAlign(tableColumn.contentAlignment),
+            )));
+        tableRowWidgets.add(SizedBox(width: 3));
+        colNumber += 1;
+      }
+      tableRows.add(Container(
+          padding: EdgeInsets.all(3.0),
+          decoration: BoxDecoration(color: rowColor),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: tableRowWidgets,
+          )));
+      tableRows.add(SizedBox(height: 3));
+      rowNumber += 1;
+    }
+
+    return Column(
+      children: tableRows,
+    );
+  }
+
+  TextAlign getTextAlign(var alignment) {
+    if (alignment == null) {
+      return TextAlign.start;
+    }
+
+    /*if (alignment.toString().toUpperCase() == "RIGHT") {
+      return TextAlign.end;
+    } */
+
+    return alignment;
   }
 
   Widget getLeftScroller() {
-    return ElevatedButton.icon(
-      onPressed: () {
-        tableWidthScrollOffset = (tableWidthScrollOffset > 0)
-            ? (tableWidthScrollOffset - widthScrollOffsetInterval)
-            : 0;
-        tableHeadWidthScrollController.jumpTo(
-          tableWidthScrollOffset,
-        );
-        tableBodyWidthScrollController.jumpTo(
-          tableWidthScrollOffset,
-        );
-      },
-      icon: Icon(Icons.arrow_left_sharp),
-      style: ElevatedButton.styleFrom(
-        shape: CircleBorder(),
-        padding: EdgeInsets.all(16),
-      ),
-      label: Container(),
-    );
+    return Row(children: [
+      ElevatedButton.icon(
+        onPressed: () {
+          tableWidthScrollOffset = (tableWidthScrollOffset > 0)
+              ? (tableWidthScrollOffset - widthScrollOffsetInterval)
+              : 0;
+          tableHeadWidthScrollController.jumpTo(
+            tableWidthScrollOffset,
+          );
+          tableBodyWidthScrollController.jumpTo(
+            tableWidthScrollOffset,
+          );
+        },
+        icon: Icon(Icons.arrow_left_sharp),
+        style: ElevatedButton.styleFrom(
+          shape: CircleBorder(),
+          padding: EdgeInsets.all(16),
+        ),
+        label: Container(),
+      )
+    ]);
   }
 
   Widget getRightScroller() {
-    return ElevatedButton.icon(
-      onPressed: () {
-        // get maxScrollExtent
-        ScrollPosition tableHeadScrollPosition =
-            tableHeadWidthScrollController.positions.first;
-        ScrollPosition tableBodyScrollPosition =
-            tableHeadWidthScrollController.positions.first;
+    return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+      ElevatedButton.icon(
+        onPressed: () {
+          // get maxScrollExtent
+          ScrollPosition tableHeadScrollPosition =
+              tableHeadWidthScrollController.positions.first;
+          ScrollPosition tableBodyScrollPosition =
+              tableHeadWidthScrollController.positions.first;
 
-        double maxScrollExtent = tableHeadScrollPosition.maxScrollExtent;
-        tableWidthScrollOffset = (tableWidthScrollOffset < maxScrollExtent)
-            ? (tableWidthScrollOffset +
-                min(
-                  widthScrollOffsetInterval,
-                  (maxScrollExtent - tableWidthScrollOffset),
-                ))
-            : maxScrollExtent;
-        tableHeadWidthScrollController.jumpTo(
-          tableWidthScrollOffset,
-        );
-        tableBodyWidthScrollController.jumpTo(
-          tableWidthScrollOffset,
-        );
-        // .animateTo(tableWidthScrollOffset, duration: Duration(seconds: 1), curve: Curves);
-        // widget.showMessageFunction("Table width is ${tableWidthScrollController.positions} EXTENT $maxScrollExtent");
-      },
-      icon: Icon(Icons.arrow_right_sharp),
-      style: ElevatedButton.styleFrom(
-        shape: CircleBorder(),
-        padding: EdgeInsets.all(16),
-      ),
-      label: Container(),
-    );
+          double maxScrollExtent = tableHeadScrollPosition.maxScrollExtent;
+          tableWidthScrollOffset = (tableWidthScrollOffset < maxScrollExtent)
+              ? (tableWidthScrollOffset +
+                  min(
+                    widthScrollOffsetInterval,
+                    (maxScrollExtent - tableWidthScrollOffset),
+                  ))
+              : maxScrollExtent;
+          tableHeadWidthScrollController.jumpTo(
+            tableWidthScrollOffset,
+          );
+          tableBodyWidthScrollController.jumpTo(
+            tableWidthScrollOffset,
+          );
+          // .animateTo(tableWidthScrollOffset, duration: Duration(seconds: 1), curve: Curves);
+          // widget.showMessageFunction("Table width is ${tableWidthScrollController.positions} EXTENT $maxScrollExtent");
+        },
+        icon: Icon(Icons.arrow_right_sharp),
+        style: ElevatedButton.styleFrom(
+          shape: CircleBorder(),
+          padding: EdgeInsets.all(16),
+        ),
+        label: Container(),
+      )
+    ]);
   }
 
   List<Widget> getHeaderActionButtons() {
@@ -260,6 +398,9 @@ class EditplusNuTableState extends State<EditplusNuTable> {
           },
         ),
       );
+      buttonList.add(SizedBox(
+        width: 3,
+      ));
     }
 
     // the csv export button
@@ -282,13 +423,19 @@ class EditplusNuTableState extends State<EditplusNuTable> {
       ),
     );
 
+    buttonList.add(SizedBox(
+      width: 3,
+    ));
+
     return buttonList;
   }
 
   // copy to clipboard and alert
   Future<void> _copyToClipboard(var csvContent) async {
     await Clipboard.setData(ClipboardData(text: csvContent));
-    widget.showMessageFunction!("FULL TABLE DATA COPIED TO CLIPBOARD");
+    if (widget.showMessageFunction != null) {
+      widget.showMessageFunction!("FULL TABLE DATA COPIED TO CLIPBOARD");
+    }
   }
 
   bool getCreateState() {
@@ -309,13 +456,14 @@ class EditplusNuTableState extends State<EditplusNuTable> {
     return columnNames;
   }
 
-  Widget getPageScroller()
-  {
-              getPageUp(),
-              SizedBox(width: 5),
-              getPageNumbersLabel(),
-              SizedBox(width: 5),
-              getPageDown(),    
+  Widget getPageScroller() {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      getPageUp(),
+      SizedBox(width: 5),
+      getPageNumbersLabel(),
+      SizedBox(width: 5),
+      getPageDown(),
+    ]);
   }
 
   Widget getPageNumbersLabel() {
@@ -366,7 +514,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
     }
 
     return Container();
-  }  
+  }
 
 /* List getOtherActionButtons() {
     List<Widget> buttonList = [];

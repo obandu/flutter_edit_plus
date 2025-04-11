@@ -27,4 +27,6 @@ class EditplusNuTableColumn {
   }
 
   get columName => columnName;
+
+  get columnWid => (columnWidth == null) ? defaultColumnWidth : columnWidth;
 }

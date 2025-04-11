@@ -10,12 +10,12 @@ class EditplusNuTableBody extends StatelessWidget {
       required this.tableColumns,
       this.bandedRowColors});
 
-  @override
   Widget build(BuildContext context) {
     var tableRows = <Widget>[];
     int rowNumber = 0;
     int numColors = (bandedRowColors?.length ?? 0);
     Color rowColor = Colors.white;
+    print("First page row in this group is ${tableRowsContent.first}");
     for (var tableRowContent in tableRowsContent) {
       var tableRowWidgets = <Widget>[];
       if (bandedRowColors != null && numColors >= 2) {
