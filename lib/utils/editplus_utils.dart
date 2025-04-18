@@ -52,6 +52,27 @@ class EditPlusUtils {
     return csvcontent;
   }
 
+  static String getMapListAsCSV(List<Map> values, List<String> valueNames) {
+    String csvcontent = "";
+
+    for (String valueName in valueNames) {
+      csvcontent += (valueName + ",");
+    }
+    csvcontent = csvcontent.substring(0, csvcontent.length - 1);
+    csvcontent += "\n";
+
+    for (Map valueMap in values) {
+      for (String valueName in valueNames) {
+        csvcontent += (valueMap[valueName].toString() + ",");
+      }
+      csvcontent = csvcontent.substring(0, csvcontent.length - 1);
+      csvcontent += "\n";
+    }
+    csvcontent = csvcontent.substring(0, csvcontent.length - 1);
+
+    return csvcontent;
+  }
+
   static int getInteger(String intvalue) {
     try {
       return int.parse(intvalue);

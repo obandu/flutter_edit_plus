@@ -14,7 +14,7 @@ class NuTableHeader extends StatelessWidget {
     tableColumns.forEach((tableColumn) {
       columnList.add(tableColumn.getView());
       columnList.add(SizedBox(
-        width: 3,
+        width: columnSpacing,
       ));
     });
 

@@ -15,6 +15,7 @@ class EditplusNuTableColumn {
       this.contentAlignment});
 
   Widget getView() {
+    print("Column name $columName width $columnWidth");
     if (columnWidth == null || columnWidth == 0) {
       columnWidth = defaultColumnWidth;
     }
@@ -28,5 +29,8 @@ class EditplusNuTableColumn {
 
   get columName => columnName;
 
-  get columnWid => (columnWidth == null) ? defaultColumnWidth : columnWidth;
+  double get columnWid =>
+      (columnWidth == null) ? defaultColumnWidth : columnWidth!;
+
+  void set columnWid(double colwid) => columnWidth = colwid;
 }

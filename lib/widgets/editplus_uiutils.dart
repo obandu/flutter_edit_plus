@@ -9,6 +9,7 @@ class EditPlusUiUtils {
       hintText: hint,
       focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 1.0)),
       enabledBorder: OutlineInputBorder(borderSide: BorderSide(width: 1.0)),
+      disabledBorder: OutlineInputBorder(borderSide: BorderSide(width: 1.0)),
       labelText: label,
     );
   }
