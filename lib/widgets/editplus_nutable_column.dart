@@ -33,4 +33,8 @@ class EditplusNuTableColumn {
       (columnWidth == null) ? defaultColumnWidth : columnWidth!;
 
   void set columnWid(double colwid) => columnWidth = colwid;
+
+  String toString() {
+    return "$columName:$columnWidth";
+  }
 }

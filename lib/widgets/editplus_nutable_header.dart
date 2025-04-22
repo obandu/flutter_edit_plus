@@ -10,6 +10,7 @@ class NuTableHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("In header build the columns are ${tableColumns}");
     List<Widget> columnList = [];
     tableColumns.forEach((tableColumn) {
       columnList.add(tableColumn.getView());
