@@ -15,12 +15,12 @@ class EditplusNuTableColumn {
       this.contentAlignment});
 
   Widget getView() {
-    print("Column name $columName width $columnWidth");
+    // print("Column name $columName width $columnWidth");
     if (columnWidth == null || columnWidth == 0) {
       columnWidth = defaultColumnWidth;
     }
     return ConstrainedBox(
-        constraints: BoxConstraints(minWidth: columnWidth!),
+        constraints: BoxConstraints(minWidth: columnWid),
         child: Container(
             padding: EdgeInsets.all(2),
             color: Colors.grey,
@@ -35,6 +35,6 @@ class EditplusNuTableColumn {
   void set columnWid(double colwid) => columnWidth = colwid;
 
   String toString() {
-    return "$columName:$columnWidth";
+    return "$columName:$columnWid";
   }
 }
