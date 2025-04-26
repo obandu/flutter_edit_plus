@@ -11,7 +11,7 @@ class EditplusNuTableColumn {
   EditplusNuTableColumn(
       {required this.columnName,
       required this.columnLabel,
-      this.columnWidth,
+      required this.columnWidth,
       this.contentAlignment});
 
   Widget getView() {
@@ -35,6 +35,6 @@ class EditplusNuTableColumn {
   void set columnWid(double colwid) => columnWidth = colwid;
 
   String toString() {
-    return "$columName:$columnWid";
+    return "$columName:$columnWid:$contentAlignment";
   }
 }

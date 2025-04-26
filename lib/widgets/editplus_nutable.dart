@@ -11,7 +11,7 @@ class EditplusNuTable extends StatefulWidget {
   double? rowSpacing;
 
   // table column headers and dimensions
-  final List<EditplusNuTableColumn> tableColumns;
+  // final List<EditplusNuTableColumn> tableColumns;
   final List<String> tableColumnNames;
   final Map<String, String> tableColumnLabels;
   Map<String, double>? columnWidths;
@@ -19,7 +19,7 @@ class EditplusNuTable extends StatefulWidget {
   Map<String, dynamic>? columnsWithAlignments;
 
   // table rows
-  final List<Map> tableRows;
+  final List<Map> tableRowContent;
 
   List<Color> bandedRows = [Colors.white, Colors.orangeAccent];
   final Widget? tableTitle;
@@ -32,12 +32,12 @@ class EditplusNuTable extends StatefulWidget {
       required this.tableOuterMargin,
       required this.viewPortWidth,
       this.viewPortHeight,
-      required this.tableColumns,
+      // required this.tableColumns,
       required this.tableColumnLabels,
       required this.tableColumnNames,
       this.columnWidths,
       this.columnsWithAlignments,
-      required this.tableRows,
+      required this.tableRowContent,
       this.tableTitle,
       this.refreshTableFunction,
       this.showMessageFunction});
@@ -55,13 +55,13 @@ class EditplusNuTableState extends State<EditplusNuTable> {
   final double widthScrollOffsetInterval = 50.0;
   final double minTableHeight = 200;
   double minTableWidth = 600;
-  late double screenWidth;
   late double tableWidth;
   Widget tableTitle = Text("UNNAMED TABLE");
 
   // table columns
   List<EditplusNuTableColumn> tableColumns = [];
   final double minTableColumnHeaderHeight = 40;
+  final double defaultColumnWidth = 160;
 
   // pagination and display
   int currentDisplayPage = 0;
@@ -70,7 +70,6 @@ class EditplusNuTableState extends State<EditplusNuTable> {
   int _calculatedPages = 1;
 
   // table rows
-  List<Widget> tableRows = [];
   List<TextEditingController> textEditingControllers = [];
   List<TextFormField> textFormFields = [];
   late Column visualTableRows;
@@ -89,16 +88,54 @@ class EditplusNuTableState extends State<EditplusNuTable> {
     buildErrorCondition = false;
     buildErrorsFound = [];
 
-    // start by making the columns
+    // 1. CREATE COLUMNS
     tableColumns = makeTableColumns(
         columnsWithAlignment: widget.columnsWithAlignments,
         tableColumnLabels: widget.tableColumnLabels,
         tableColumnNames: widget.tableColumnNames);
 
     // set default table width to be based on default column width
-    minTableWidth = (tableColumns.length * tableColumns.first.columnWid) +
+    minTableWidth = (tableColumns.length * defaultColumnWidth) +
         (tableColumns.length * widget.tableInnerMargin);
 
+    // 2. SET TABLE AND COLUMN WIDTHS
+    setTableWidthAndColumnSizes();
+
+    // Set table title
+    if (widget.tableTitle != null) {
+      tableTitle = widget.tableTitle!;
+    }
+
+    // page preparation
+    // initialise page size
+    currentDisplayPage = 0;
+    determinePagination();
+
+    // print("Display page size at init is ${displayPageSize} and calculated pages is ${_calculatedPages} and num rows is ${widget.tableRows.length}");
+    print(
+        "Column wids at init =  tableWidth = $tableWidth and minimum is $minTableWidth, viewport width = ${widget.viewPortWidth} and columns are ${tableColumns}");
+
+    // initialise the display matrix
+    // generate the text editing controllers
+    textEditingControllers = List.generate(
+        (displayPageSize * tableColumns.length),
+        (index) => TextEditingController());
+
+    // generate the text form fields
+    textFormFields = List.generate(
+        (displayPageSize * tableColumns.length),
+        (index) => TextFormField(
+            enabled: false,
+            maxLines: null,
+            textAlign: getTextAlign(
+                tableColumns[index % tableColumns.length].contentAlignment),
+            controller: textEditingControllers[index],
+            decoration: getTableCellDecoration()));
+
+    createVisualTableRows();
+  }
+
+  void setTableWidthAndColumnSizes() {
     // initialise table width to zero
     tableWidth = 0;
 
@@ -114,10 +151,11 @@ class EditplusNuTableState extends State<EditplusNuTable> {
         String columnName = column.columnName;
         double? givenColumnWidth = widget.columnWidths![columnName];
         if (givenColumnWidth == null) {
-          tableWidth += (column.columnWid + widget.tableInnerMargin);
+          tableWidth += defaultColumnWidth; //  + widget.tableInnerMargin);
+          column.columnWid = defaultColumnWidth;
         } else {
           column.columnWid = givenColumnWidth;
-          tableWidth += givenColumnWidth!;
+          tableWidth += givenColumnWidth!; //  + widget.tableInnerMargin);
         }
       }
     }
@@ -136,36 +174,18 @@ class EditplusNuTableState extends State<EditplusNuTable> {
 
       tableWidth = max(minTableWidth, nutableWidth);
     }
-
-    screenWidth = widget.viewPortWidth;
-
-    if (widget.tableTitle != null) {
-      tableTitle = widget.tableTitle!;
-    }
-
-    // page preparation
-    // initialise page size
-    currentDisplayPage = 0;
-    determinePageSize();
-
-    // print("Display page size at init is ${displayPageSize} and calculated pages is ${_calculatedPages} and num rows is ${widget.tableRows.length}");
-    print(
-        "Column wids at init =  tableWidth = $tableWidth and minimum is $minTableWidth, viewport width = ${widget.viewPortWidth} and columns are ${tableColumns}");
-
-    // initialise the display matrix
-    // build display matrix
-    createVisualTableRows();
   }
 
-  void determinePageSize() {
+  void determinePagination() {
     // determine the display page size
-    if (widget.tableRows.length > 0) {
-      displayPageSize = min(preferredDisplayPageSize, widget.tableRows.length);
+    if (widget.tableRowContent.length > 0) {
+      displayPageSize =
+          min(preferredDisplayPageSize, widget.tableRowContent.length);
     }
 
-    _calculatedPages = (widget.tableRows.length ~/ displayPageSize);
+    _calculatedPages = (widget.tableRowContent.length ~/ displayPageSize);
 
-    if ((widget.tableRows.length % displayPageSize) >= 1) {
+    if ((widget.tableRowContent.length % displayPageSize) >= 1) {
       _calculatedPages += 1;
     }
 
@@ -175,8 +195,13 @@ class EditplusNuTableState extends State<EditplusNuTable> {
   @mustCallSuper
   @protected
   void didUpdateWidget(covariant EditplusNuTable oldWidget) {
-    print("\n ....Widget is updated ..... \n");
-    currentDisplayPage = 0;
+    print(
+        "\n ....Widget is updated ..... and new width is ${widget.viewPortWidth} and tablewidth is ${tableWidth}\n");
+    // currentDisplayPage = 0;
+
+    setTableWidthAndColumnSizes();
+
+    createVisualTableRows();
   }
 
   @override
@@ -185,10 +210,9 @@ class EditplusNuTableState extends State<EditplusNuTable> {
       return Text("We have an error condition ${buildErrorsFound}");
     }
 
-    screenWidth = MediaQuery.sizeOf(context).width;
-    determinePageSize();
+    // determinePageSize();
     print(
-        "At build - The widths are screen: $screenWidth and tableWidth $tableWidth and viewportwidth ${widget.viewPortWidth}");
+        "At build - The widths are screen:  and tableWidth $tableWidth and viewportwidth ${widget.viewPortWidth}");
     return Padding(
       padding: EdgeInsets.all(widget.tableOuterMargin),
       child: SingleChildScrollView(
@@ -209,9 +233,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
         Divider(),
         Row(children: [
           Expanded(
-            child: (tableWidth >
-                    widget
-                        .viewPortWidth) // (screenWidth < tableWidth + widthScrollOffsetInterval)
+            child: (tableWidth > widget.viewPortWidth)
                 ? getLeftScroller()
                 : Container(),
           ),
@@ -220,9 +242,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
             child: getPageScroller(),
           ),
           Expanded(
-            child: (tableWidth >
-                    widget
-                        .viewPortWidth) // (screenWidth < tableWidth + widthScrollOffsetInterval)
+            child: (tableWidth > widget.viewPortWidth)
                 ? getRightScroller()
                 : Container(),
           ),
@@ -251,8 +271,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
         controller: tableHeadWidthScrollController,
         child: ConstrainedBox(
           constraints: BoxConstraints(
-              minWidth: min(tableWidth, screenWidth),
-              minHeight: minTableColumnHeaderHeight),
+              minWidth: tableWidth, minHeight: minTableColumnHeaderHeight),
           child: NuTableHeader(
             tableColumns: tableColumns,
             tableWidth: tableWidth,
@@ -266,16 +285,16 @@ class EditplusNuTableState extends State<EditplusNuTable> {
 
     int lastIndex = 0;
 
-    if (widget.tableRows.length >= 1) {
-      lastIndex = min(widget.tableRows.length - 1,
+    if (widget.tableRowContent.length >= 1) {
+      lastIndex = min(widget.tableRowContent.length - 1,
           ((currentDisplayPage * displayPageSize) + displayPageSize) - 1);
-      pageRows = widget.tableRows
+      pageRows = widget.tableRowContent
           .sublist((currentDisplayPage * displayPageSize), lastIndex + 1);
     }
 
     // print("Page rows are from ${(currentDisplayPage * displayPageSize)} to ${lastIndex} and table length is ${widget.tableRows.length} and dp size is ${displayPageSize}");
 
-    updateVisualTableRows(pageRows);
+    updateTableRowsContent(pageRows);
 
     // print("First page row in this group is ${pageRows.first}");
     return Expanded(
@@ -284,7 +303,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
             controller: tableBodyWidthScrollController,
             child: ConstrainedBox(
                 constraints: BoxConstraints(
-                    minWidth: min(tableWidth, screenWidth),
+                    minWidth: tableWidth,
                     minHeight: minTableHeight,
                     maxHeight: 400),
                 child: SingleChildScrollView(
@@ -296,25 +315,8 @@ class EditplusNuTableState extends State<EditplusNuTable> {
   }
 
   void createVisualTableRows() {
-    // generate the text editing controllers
-    textEditingControllers = List.generate(
-        (displayPageSize * tableColumns.length),
-        (index) => TextEditingController());
-
-    // generate the text form fields
-    textFormFields = List.generate(
-        (displayPageSize * tableColumns.length),
-        (index) => TextFormField(
-            enabled: false,
-            maxLines: null,
-            textAlign: getTextAlign(widget
-                .tableColumns[index % tableColumns.length].contentAlignment),
-            controller: textEditingControllers[index],
-            decoration: getTableCellDecoration()));
-
     // add text fields to rows
     var inTableRows = <Row>[];
-
     var inColumnWids = [];
     var widgetsForRow = <Widget>[];
     int widgetCount = 0;
@@ -356,6 +358,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
     int numColors = (widget.bandedRows?.length ?? 0);
     Color rowColor = Colors.white;
 
+    List<Widget> tableRows = [];
     for (Row inRow in inTableRows) {
       if (widget.bandedRows != null && numColors >= 2) {
         rowColor = widget.bandedRows![rowNumber % numColors];
@@ -370,7 +373,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
       rowNumber += 1;
     }
 
-    visualTableRows = Column(
+    visualTableRows = new Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: tableRows,
     );
@@ -378,7 +381,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
     // print("The columns are ${widget.tableColumns.length} and total, page size is ${displayPageSize} fields are ${textFormFields.length} and rows are ${tableRows.length}");
   }
 
-  void updateVisualTableRows(var pageRows) {
+  void updateTableRowsContent(var pageRows) {
     // print("Update of visual table requested ...., page size is ${displayPageSize} and number of records is ${pageRows.length} ");
 
     // clear all text editing controllers (make empty)
@@ -404,10 +407,6 @@ class EditplusNuTableState extends State<EditplusNuTable> {
     if (alignment == null) {
       return TextAlign.start;
     }
-
-    /*if (alignment.toString().toUpperCase() == "RIGHT") {
-      return TextAlign.end;
-    } */
 
     return alignment;
   }
@@ -509,7 +508,7 @@ class EditplusNuTableState extends State<EditplusNuTable> {
         onPressed: () {
           // get table as CSV
           var csvContent = EditPlusUtils.getMapListAsCSV(
-            widget.tableRows,
+            widget.tableRowContent,
             getColumnNamesAsList(),
           );
           // cannot refresh if in editing mode
@@ -545,10 +544,11 @@ class EditplusNuTableState extends State<EditplusNuTable> {
     return false;
   }
 
+  // FOR EXPORT
   List<String> getColumnNamesAsList() {
     var columnNames = <String>[];
 
-    for (var tableColumn in widget.tableColumns) {
+    for (var tableColumn in tableColumns) {
       columnNames.add(tableColumn.columnName);
     }
 
@@ -564,9 +564,12 @@ class EditplusNuTableState extends State<EditplusNuTable> {
     for (String columnName in tableColumnNames) {
       myTableColumns.add(EditplusNuTableColumn(
           columnName: columnName,
+          columnWidth: defaultColumnWidth,
           columnLabel: tableColumnLabels[columnName] ?? columnName,
           contentAlignment: columnsWithAlignment?[columnName]));
     }
+
+    print("The column alignmens are ${columnsWithAlignment}");
 
     return myTableColumns;
   }
