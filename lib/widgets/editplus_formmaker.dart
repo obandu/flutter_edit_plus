@@ -1,14 +1,11 @@
 part of edit_plus;
 
 class EditplusFormMaker {
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [],
-      ),
-    );
-  }
+  Function? formSubmitFunction;
+  Function functionBroker;
+  var formValuesContainer = {};
+
+  EditplusFormMaker({this.formSubmitFunction, required this.functionBroker});
 
   bool validate() {
     return false;
@@ -107,9 +104,12 @@ class EditplusFormMaker {
         returnWidget = renderFormSection(formElement);
         break;
       case "TEXTFIELD":
+        TextEditingController _tecTextInput = TextEditingController();
+        formValuesContainer[formElement["NAME"]] = _tecTextInput;
         returnWidget = TextFormField(
           decoration: EditPlusUiUtils.getFormTextFieldDecoration(
               label: formElement["LABEL"], hint: formElement["LABEL"]),
+          controller: _tecTextInput,
         );
         break;
       case "LABEL":
@@ -117,10 +117,21 @@ class EditplusFormMaker {
             size: 16, text: formElement["TEXT"], weight: FontWeight.bold);
         break;
       case "DROPDOWN":
+        String valuesType = formElement["VALUES"].runtimeType.toString();
+        List valuesList = ["EMPTY LIST"];
+        if (valuesType == "STRING" &&
+            formElement["VALUES"].toUpperCase() == "DYNAMIC") {
+          valuesList = functionBroker("ListProviderFunction")
+              .getList(formElement['NAME']);
+        }
+        if (valuesType.toUpperCase().startsWith("LIST")) {
+          valuesList = formElement["VALUES"];
+        }
+        print("The dropdown data type is ${valuesType}");
         returnWidget = EditPlusStringDropdown(
             hintText: formElement["LABEL"],
-            valuesList: ["dynamically acquired"],
-            valueContainer: {});
+            valuesList: valuesList,
+            valueContainer: formValuesContainer);
         break;
       case "BUTTON":
         returnWidget = OutlinedButton(
@@ -160,4 +171,17 @@ class EditplusFormMaker {
   }
 
   void callFunction() {}
+
+  getFormValues() {
+    var returnData = {};
+
+    formValuesContainer.forEach((key, value) {
+      if (value is TextEditingController) {
+        returnData[key] = value.text;
+      } else {
+        returnData[key] = value;
+      }
+    });
+    return returnData;
+  }
 }

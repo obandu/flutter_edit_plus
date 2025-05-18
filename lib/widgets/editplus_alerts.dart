@@ -312,4 +312,66 @@ class EditplusAlerts {
       },
     );
   }
+
+  static void showFlexibleInputDialog(BuildContext context,
+      {required String dialogTitle,
+      required String dialogLabel,
+      required String inputDefinition,
+      required Function functionBroker,
+      Function? returnInputFunction}) {
+    EditplusFormMaker thisFormMaker = EditplusFormMaker(
+        formSubmitFunction: returnInputFunction,
+        functionBroker: functionBroker);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          titlePadding: EdgeInsets.zero,
+          title: Container(
+            padding: const EdgeInsets.all(8),
+            child: Text(dialogTitle,
+                style: Theme.of(context).primaryTextTheme.headlineSmall),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            width: 360,
+          ),
+          content: SizedBox(
+              width: 480,
+              height: 360,
+              child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                return thisFormMaker.makeForm(inputDefinition);
+              })),
+          actions: <Widget>[
+            OutlinedButton.icon(
+              icon: Icon(
+                Icons.backspace_rounded,
+                color: Colors.red,
+              ),
+              label: const Text("  CANCEL  "),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            OutlinedButton.icon(
+              icon: Icon(
+                Icons.done_sharp,
+                color: Colors.green,
+              ),
+              label: const Text("  OK  "),
+              onPressed: () {
+                var formData = thisFormMaker.getFormValues();
+                print("The collected values are $formData");
+                Navigator.of(context).pop(returnInputFunction != null
+                    ? returnInputFunction(formData)
+                    : null);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
