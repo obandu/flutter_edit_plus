@@ -342,7 +342,8 @@ class EditplusAlerts {
               height: 360,
               child: StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState) {
-                return thisFormMaker.makeForm(inputDefinition);
+                return SingleChildScrollView(
+                    child: thisFormMaker.makeForm(inputDefinition));
               })),
           actions: <Widget>[
             OutlinedButton.icon(

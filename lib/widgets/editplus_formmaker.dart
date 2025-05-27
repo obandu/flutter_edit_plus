@@ -112,6 +112,19 @@ class EditplusFormMaker {
           controller: _tecTextInput,
         );
         break;
+      case "PASSWORDFIELD":
+        TextEditingController _tecTextInput = TextEditingController();
+        formValuesContainer[formElement["NAME"]] = _tecTextInput;
+        returnWidget = TextFormField(
+          decoration: EditPlusUiUtils.getFormTextFieldDecoration(
+              label: formElement["LABEL"], hint: formElement["LABEL"]),
+          obscureText: true,
+          enableSuggestions: false,
+          autocorrect: false,
+          // suffixIcon : get
+          controller: _tecTextInput,
+        );
+        break;
       case "LABEL":
         returnWidget = EditPlusUiUtils.getStyledText(
             size: 16, text: formElement["TEXT"], weight: FontWeight.bold);

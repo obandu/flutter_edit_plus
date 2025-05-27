@@ -14,8 +14,8 @@ class EditPlusStringDropdown extends StatefulWidget {
 
   EditPlusStringDropdown(
       {required this.valuesList,
-       required this.hintText,
-       required this.valueContainer,
+      required this.hintText,
+      required this.valueContainer,
       this.validationFunction,
       this.onSaveFunction,
       this.saveDataKey,
@@ -28,15 +28,17 @@ class EditPlusStringDropdown extends StatefulWidget {
 
   setSelectedValue(var value) {
     valueContainer['VALUE'] = value;
-    if (onSelectFunction != null)
-    {
+    if (onSelectFunction != null) {
       onSelectFunction!(value);
     }
   }
 
-  get values => valueContainer; 
+  get values => valueContainer;
 
-  get instanceCopy => EditPlusStringDropdown(valuesList: valuesList, hintText: hintText, valueContainer: valueContainer);
+  get instanceCopy => EditPlusStringDropdown(
+      valuesList: valuesList,
+      hintText: hintText,
+      valueContainer: valueContainer);
 }
 
 class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
@@ -53,9 +55,9 @@ class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
             widget.setSelectedValue(_value);
           });
         },
-        validator: (value)
-        {
-          var validationresult = widget.validationFunction!(widget.hintText, value.toString());
+        validator: (value) {
+          var validationresult =
+              widget.validationFunction!(widget.hintText, value.toString());
           return validationresult;
         },
         items: widget.valuesList.map<DropdownMenuItem<String>>((value) {
@@ -66,8 +68,7 @@ class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
         }).toList(),
         hint: Text(widget.hintText),
         decoration: InputDecoration(
-          border: OutlineInputBorder(),
-        ),
+            border: OutlineInputBorder(), labelText: widget.hintText),
         value: widget.valueContainer['VALUE'],
         onSaved: (savevalue) {
           widget.onSaveFunction!(widget.saveDataKey, savevalue);
