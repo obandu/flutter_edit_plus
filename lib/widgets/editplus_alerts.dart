@@ -318,6 +318,8 @@ class EditplusAlerts {
       required String dialogLabel,
       required String inputDefinition,
       required Function functionBroker,
+      required String cancelButtonText,
+      required String submitButtonText,
       Function? returnInputFunction}) {
     EditplusFormMaker thisFormMaker = EditplusFormMaker(
         formSubmitFunction: returnInputFunction,

@@ -89,6 +89,14 @@ class EditPlusUtils {
     }
   }
 
+  static bool getBoolean(String boolvalue) {
+    if (boolvalue.toUpperCase == "TRUE") {
+      return true;
+    }
+
+    return false;
+  }
+
   static String numPad(int num, int length) {
     String padded = num.toString().padLeft(length, '0');
     return padded;

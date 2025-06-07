@@ -30,7 +30,7 @@ class EditplusFormsectionState extends State<EditplusFormsection> {
                 Expanded(
                   child: EditPlusUiUtils.getBoldLabelText(widget.title),
                 ),
-                OutlinedButton.icon(
+                TextButton.icon(
                     onPressed: hideUnHideSection,
                     label: Text(""),
                     icon: arrowIcon),

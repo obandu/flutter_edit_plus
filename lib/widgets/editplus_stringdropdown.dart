@@ -7,6 +7,7 @@ class EditPlusStringDropdown extends StatefulWidget {
   // valueContainer is useful when working with
   final Map valueContainer;
   final String hintText;
+  final String? dropdownName;
   final Function? validationFunction;
   final Function? onSaveFunction;
   final Function? onSelectFunction;
@@ -16,6 +17,7 @@ class EditPlusStringDropdown extends StatefulWidget {
       {required this.valuesList,
       required this.hintText,
       required this.valueContainer,
+      this.dropdownName,
       this.validationFunction,
       this.onSaveFunction,
       this.saveDataKey,
@@ -27,7 +29,12 @@ class EditPlusStringDropdown extends StatefulWidget {
   }
 
   setSelectedValue(var value) {
-    valueContainer['VALUE'] = value;
+    if (dropdownName != null) {
+      valueContainer[dropdownName] = value;
+    } else {
+      valueContainer[hintText] = value;
+    }
+
     if (onSelectFunction != null) {
       onSelectFunction!(value);
     }

@@ -12,9 +12,15 @@ class EditplusFormMaker {
   }
 
   Widget makeForm(String formAsJSON) {
+    // evaluate form structure for well-formedness
     var formStructure = evaluateForm(formAsJSON);
 
-    return renderFormBody(formStructure);
+    Widget formBody = renderFormBody(formStructure);
+
+    // initialise form content
+    Function contentProviderFunction = functionBroker("GET_CONTENTPROVIDER");
+
+    return formBody;
   }
 
   Widget renderFormBody(var formStructure) {
@@ -56,20 +62,20 @@ class EditplusFormMaker {
         ? []
         : formSectionStructure["ELEMENTS"];
 
-    for (var formSecElement in formSectionElements) {
-      Widget? formSElementWidget = renderFormElement(formSecElement);
-      if (formSElementWidget == null) {
-        continue;
-      }
-      formSectionItems.add(formSElementWidget);
-    }
-
-    if (formSectionItems.isEmpty) {
+    if (formSectionElements.isEmpty) {
       formSectionItems.add(EditPlusUiUtils.getStyledText(
           text: "No elements in this section",
           weight: FontWeight.normal,
           size: 16.0,
           color: Colors.orangeAccent));
+    } else {
+      for (var formSecElement in formSectionElements) {
+        Widget? formSElementWidget = renderFormElement(formSecElement);
+        if (formSElementWidget == null) {
+          continue;
+        }
+        formSectionItems.add(formSElementWidget);
+      }
     }
 
     return EditplusFormsection(
@@ -78,6 +84,32 @@ class EditplusFormMaker {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: formSectionItems,
         ));
+  }
+
+  Widget renderFormWrapLayout(var formWrapLayoutStructure) {
+    var formLayoutItems = <Widget>[];
+
+    List formLayoutElements = (formWrapLayoutStructure["ELEMENTS"] == null)
+        ? []
+        : formWrapLayoutStructure["ELEMENTS"];
+
+    if (formLayoutElements.isEmpty) {
+      formLayoutItems.add(EditPlusUiUtils.getStyledText(
+          text: "Wrap layout has no children",
+          weight: FontWeight.normal,
+          size: 16.0,
+          color: Colors.orangeAccent));
+    } else {
+      for (var formLyElement in formLayoutElements) {
+        Widget? formLElementWidget = renderFormElement(formLyElement);
+        if (formLElementWidget == null) {
+          continue;
+        }
+        formLayoutItems.add(formLElementWidget);
+      }
+    }
+
+    return Wrap(children: formLayoutItems);
   }
 
   Widget? renderFormElement(var formElement) {
@@ -91,13 +123,34 @@ class EditplusFormMaker {
       return SizedBox(height: 10);
     }
 
+    if (formElement["TYPE"] == 'LAYOUT_WRAP') {
+      return renderFormWrapLayout(formElement);
+    }
+
+    // some form elements are required to have names
     if (formElement["NAME"] == null) {
       return EditPlusUiUtils.getBoldLabelText(
           "ELEMENT '$formElementType' requires a NAME",
           fontSize: 16);
+    } else {
+      // form elements that require names must have unique names
+      // 1. Check if given element name is already in values container, if so Error
+      // 2. Add each form element name as key in value containers but with null value
+      if (formValuesContainer.containsKey(formElement["NAME"])) {
+        return EditPlusUiUtils.getBoldLabelText(
+            "Form element name ${formElement["NAME"]} used for element of type '$formElementType' has already been used. Form elements must have unique names for evaluation and data collection.",
+            fontSize: 12);
+      }
     }
 
     Widget returnWidget = Text("ELEMENT NOT DEFINED PROPERLY $formElementType");
+
+    bool isRequired = false;
+    var isRequiredText = formElement["REQUIRED"].toString();
+
+    if (isRequiredText.toUpperCase() == "YES") {
+      isRequired = true;
+    }
 
     switch (formElementType) {
       case "SECTION":
@@ -106,15 +159,27 @@ class EditplusFormMaker {
       case "TEXTFIELD":
         TextEditingController _tecTextInput = TextEditingController();
         formValuesContainer[formElement["NAME"]] = _tecTextInput;
+
+        // textfield length
+        var textWidth = formElement["TEXTLENGTH"];
+        int textLen = EditPlusUtils.getInteger(textWidth.toString());
+        textLen = (textLen == 0) ? 20 : textLen;
+
+        // textfield is editable
+        var textEditable = formElement["EDITABLE"];
+        bool textEditable = EditPlusUtils.getBoolean(textEditable.toString());
+
         returnWidget = TextFormField(
           decoration: EditPlusUiUtils.getFormTextFieldDecoration(
               label: formElement["LABEL"], hint: formElement["LABEL"]),
+          maxLength: 20,
+          enabled: textEditable,
           controller: _tecTextInput,
         );
         break;
       case "PASSWORDFIELD":
-        TextEditingController _tecTextInput = TextEditingController();
-        formValuesContainer[formElement["NAME"]] = _tecTextInput;
+        TextEditingController _tecPasswordInput = TextEditingController();
+        formValuesContainer[formElement["NAME"]] = _tecPasswordInput;
         returnWidget = TextFormField(
           decoration: EditPlusUiUtils.getFormTextFieldDecoration(
               label: formElement["LABEL"], hint: formElement["LABEL"]),
@@ -122,12 +187,12 @@ class EditplusFormMaker {
           enableSuggestions: false,
           autocorrect: false,
           // suffixIcon : get
-          controller: _tecTextInput,
+          controller: _tecPasswordInput,
         );
         break;
       case "LABEL":
         returnWidget = EditPlusUiUtils.getStyledText(
-            size: 16, text: formElement["TEXT"], weight: FontWeight.bold);
+            size: 14, text: formElement["TEXT"], weight: FontWeight.bold);
         break;
       case "DROPDOWN":
         String valuesType = formElement["VALUES"].runtimeType.toString();
@@ -144,6 +209,7 @@ class EditplusFormMaker {
         returnWidget = EditPlusStringDropdown(
             hintText: formElement["LABEL"],
             valuesList: valuesList,
+            dropdownName: formElement['NAME'],
             valueContainer: formValuesContainer);
         break;
       case "BUTTON":
@@ -189,6 +255,7 @@ class EditplusFormMaker {
     var returnData = {};
 
     formValuesContainer.forEach((key, value) {
+      print("Key is $key");
       if (value is TextEditingController) {
         returnData[key] = value.text;
       } else {

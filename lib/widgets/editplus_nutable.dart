@@ -17,6 +17,7 @@ class EditplusNuTable extends StatefulWidget {
   Map<String, double>? columnWidths;
   double? columnSpacing;
   Map<String, dynamic>? columnsWithAlignments;
+  Map<String, dynamic>? columnsWithFormatting;
 
   // table rows
   final List<Map> tableRowContent;
@@ -37,6 +38,7 @@ class EditplusNuTable extends StatefulWidget {
       required this.tableColumnNames,
       this.columnWidths,
       this.columnsWithAlignments,
+      this.columnsWithFormatting,
       required this.tableRowContent,
       this.tableTitle,
       this.refreshTableFunction,
@@ -395,8 +397,20 @@ class EditplusNuTableState extends State<EditplusNuTable> {
       for (var tableColumn in tableColumns) {
         int index = (tableColumns.length * countRow) + countCol;
 
-        textEditingControllers[index].text =
-            tableRowContent[tableColumn.columnName].toString();
+        if (widget.columnsWithFormatting != null &&
+            widget.columnsWithFormatting!.containsKey(tableColumn.columnName)) {
+          if (countRow == 0) {
+            print(
+                "The column ${tableColumn.columnName} has formatting on value ${tableRowContent[tableColumn.columnName]}");
+          }
+          textEditingControllers[index].text = widget
+              .columnsWithFormatting![tableColumn.columnName]
+                  (tableRowContent[tableColumn.columnName])
+              .toString();
+        } else {
+          textEditingControllers[index].text =
+              tableRowContent[tableColumn.columnName].toString();
+        }
         countCol += 1;
       }
       countRow += 1;
