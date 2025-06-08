@@ -75,7 +75,9 @@ class _EditPlusStringdropdownState extends State<EditPlusStringDropdown> {
         }).toList(),
         hint: Text(widget.hintText),
         decoration: InputDecoration(
-            border: OutlineInputBorder(), labelText: widget.hintText),
+            constraints: BoxConstraints(maxWidth: 720),
+            border: OutlineInputBorder(),
+            labelText: widget.hintText),
         value: widget.valueContainer['VALUE'],
         onSaved: (savevalue) {
           widget.onSaveFunction!(widget.saveDataKey, savevalue);

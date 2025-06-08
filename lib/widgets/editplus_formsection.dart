@@ -19,6 +19,7 @@ class EditplusFormsectionState extends State<EditplusFormsection> {
         ? Icon(Icons.arrow_upward_sharp)
         : Icon(Icons.arrow_downward_rounded);
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
             decoration: BoxDecoration(
@@ -42,7 +43,8 @@ class EditplusFormsectionState extends State<EditplusFormsection> {
                 decoration: BoxDecoration(
                     border: Border.all(width: 1.0, color: Colors.grey)),
                 padding: EdgeInsets.all(3.0),
-                child: widget.body),
+                child: Row(children: [widget.body]),
+              )
       ],
     );
   }

@@ -3,6 +3,7 @@ part of edit_plus;
 class EditplusFormMaker {
   Function? formSubmitFunction;
   Function functionBroker;
+  late Function contentProviderFunction;
   var formValuesContainer = {};
 
   EditplusFormMaker({this.formSubmitFunction, required this.functionBroker});
@@ -18,7 +19,7 @@ class EditplusFormMaker {
     Widget formBody = renderFormBody(formStructure);
 
     // initialise form content
-    Function contentProviderFunction = functionBroker("GET_CONTENTPROVIDER");
+    contentProviderFunction = functionBroker("GET_CONTENTPROVIDER");
 
     return formBody;
   }
@@ -109,7 +110,8 @@ class EditplusFormMaker {
       }
     }
 
-    return Wrap(children: formLayoutItems);
+    return Container(
+        child: Wrap(spacing: 15, runSpacing: 10, children: formLayoutItems));
   }
 
   Widget? renderFormElement(var formElement) {
@@ -145,11 +147,20 @@ class EditplusFormMaker {
 
     Widget returnWidget = Text("ELEMENT NOT DEFINED PROPERLY $formElementType");
 
+    // DETERMINE THE REQUIRED STATUS
     bool isRequired = false;
     var isRequiredText = formElement["REQUIRED"].toString();
-
     if (isRequiredText.toUpperCase() == "YES") {
       isRequired = true;
+    }
+
+    // DETERMINE THE WIDTH
+    double actualWidth = 360;
+    var givenWidth = formElement["WIDTH"].toString().toUpperCase();
+    if (givenWidth != "NULL") {
+      if (givenWidth == "COL8") {
+        actualWidth = 720;
+      }
     }
 
     switch (formElementType) {
@@ -163,19 +174,23 @@ class EditplusFormMaker {
         // textfield length
         var textWidth = formElement["TEXTLENGTH"];
         int textLen = EditPlusUtils.getInteger(textWidth.toString());
-        textLen = (textLen == 0) ? 20 : textLen;
+        textLen = (textLen == 0) ? TextField.noMaxLength : textLen;
 
         // textfield is editable
-        var textEditable = formElement["EDITABLE"];
-        bool textEditable = EditPlusUtils.getBoolean(textEditable.toString());
+        var textEnabledStr = formElement["ENABLED"].toString().toUpperCase();
+        bool textEnabled = EditPlusUtils.getBoolean(textEnabledStr);
 
-        returnWidget = TextFormField(
-          decoration: EditPlusUiUtils.getFormTextFieldDecoration(
-              label: formElement["LABEL"], hint: formElement["LABEL"]),
-          maxLength: 20,
-          enabled: textEditable,
-          controller: _tecTextInput,
-        );
+        returnWidget = ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: actualWidth,
+            ),
+            child: TextFormField(
+              decoration: EditPlusUiUtils.getFormTextFieldDecoration(
+                  label: formElement["LABEL"], hint: formElement["LABEL"]),
+              maxLength: textLen,
+              enabled: (textEnabledStr == "NULL") ? true : false,
+              controller: _tecTextInput,
+            ));
         break;
       case "PASSWORDFIELD":
         TextEditingController _tecPasswordInput = TextEditingController();
@@ -199,8 +214,7 @@ class EditplusFormMaker {
         List valuesList = ["EMPTY LIST"];
         if (valuesType == "STRING" &&
             formElement["VALUES"].toUpperCase() == "DYNAMIC") {
-          valuesList = functionBroker("ListProviderFunction")
-              .getList(formElement['NAME']);
+          valuesList = contentProviderFunction(formElement['NAME'], "LIST");
         }
         if (valuesType.toUpperCase().startsWith("LIST")) {
           valuesList = formElement["VALUES"];
