@@ -3,8 +3,10 @@ part of edit_plus;
 class EditplusFormsection extends StatefulWidget {
   final Widget body;
   final String title;
+  String? background = "FFFFFFFF";
 
-  EditplusFormsection({required this.title, required this.body});
+  EditplusFormsection(
+      {required this.title, required this.body, this.background});
 
   @override
   State<StatefulWidget> createState() => EditplusFormsectionState();
@@ -12,6 +14,25 @@ class EditplusFormsection extends StatefulWidget {
 
 class EditplusFormsectionState extends State<EditplusFormsection> {
   bool hidden = false;
+  int color_a = 0xFF;
+  int color_r = 0xFF;
+  int color_g = 0xFF;
+  int color_b = 0xFF;
+
+  @override
+  void initState() {
+    // make the colours if it exists
+    if (widget.background!.length == 6) {
+      color_r = int.parse(widget.background!.substring(0, 2), radix: 16);
+      color_g = int.parse(widget.background!.substring(2, 4), radix: 16);
+      color_b = int.parse(widget.background!.substring(4), radix: 16);
+    } else if (widget.background!.length == 8) {
+      color_a = int.parse(widget.background!.substring(0, 2), radix: 16);
+      color_r = int.parse(widget.background!.substring(2, 4), radix: 16);
+      color_g = int.parse(widget.background!.substring(4, 6), radix: 16);
+      color_b = int.parse(widget.background!.substring(6), radix: 16);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +62,11 @@ class EditplusFormsectionState extends State<EditplusFormsection> {
             ? Container()
             : Container(
                 decoration: BoxDecoration(
+                    color: Color.fromARGB(color_a, color_r, color_g, color_b),
                     border: Border.all(width: 1.0, color: Colors.grey)),
-                padding: EdgeInsets.all(3.0),
-                child: Row(children: [widget.body]),
-              )
+                child: Row(children: [
+                  Expanded(child: widget.body),
+                ])),
       ],
     );
   }

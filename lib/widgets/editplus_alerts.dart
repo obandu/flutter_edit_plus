@@ -321,9 +321,8 @@ class EditplusAlerts {
       required String cancelButtonText,
       required String submitButtonText,
       Function? returnInputFunction}) {
-    EditplusFormMaker thisFormMaker = EditplusFormMaker(
-        formSubmitFunction: returnInputFunction,
-        functionBroker: functionBroker);
+    EditplusFormMaker thisFormMaker =
+        EditplusFormMaker(functionBroker: functionBroker);
 
     showDialog(
       context: context,

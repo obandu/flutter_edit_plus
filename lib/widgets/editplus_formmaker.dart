@@ -1,25 +1,24 @@
 part of edit_plus;
 
 class EditplusFormMaker {
-  Function? formSubmitFunction;
   Function functionBroker;
   late Function contentProviderFunction;
   var formValuesContainer = {};
 
-  EditplusFormMaker({this.formSubmitFunction, required this.functionBroker});
+  EditplusFormMaker({required this.functionBroker});
 
   bool validate() {
     return false;
   }
 
   Widget makeForm(String formAsJSON) {
+    // initialise form content
+    contentProviderFunction = functionBroker("GET_CONTENTPROVIDER");
+
     // evaluate form structure for well-formedness
     var formStructure = evaluateForm(formAsJSON);
 
     Widget formBody = renderFormBody(formStructure);
-
-    // initialise form content
-    contentProviderFunction = functionBroker("GET_CONTENTPROVIDER");
 
     return formBody;
   }
@@ -44,13 +43,14 @@ class EditplusFormMaker {
       formItems.add(formElementWidget);
     }
 
-    return Column(
+    return SingleChildScrollView(
+        child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: formItems,
-    );
+    ));
   }
 
-  Widget renderFormSection(var formSectionStructure) {
+  Widget renderFormSection(var formSectionStructure, var background) {
     var formSectionItems = <Widget>[];
 
     // get FormName and return it (this is usually the first element)
@@ -81,6 +81,7 @@ class EditplusFormMaker {
 
     return EditplusFormsection(
         title: formSectionLabel,
+        background: background,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: formSectionItems,
@@ -111,7 +112,12 @@ class EditplusFormMaker {
     }
 
     return Container(
-        child: Wrap(spacing: 15, runSpacing: 10, children: formLayoutItems));
+        padding: EdgeInsetsGeometry.all(5.0),
+        child: Wrap(
+            spacing: 15,
+            runSpacing: 10,
+            alignment: WrapAlignment.start,
+            children: formLayoutItems));
   }
 
   Widget? renderFormElement(var formElement) {
@@ -163,9 +169,16 @@ class EditplusFormMaker {
       }
     }
 
+    // DETERMINE THE BACKGROUND IF IT EXISTS
+    String background = "FFFFFFFF";
+    var givenBG = formElement["BACKGROUND"].toString().toUpperCase();
+    if (givenBG != "NULL") {
+      background = givenBG;
+    }
+
     switch (formElementType) {
       case "SECTION":
-        returnWidget = renderFormSection(formElement);
+        returnWidget = renderFormSection(formElement, background);
         break;
       case "TEXTFIELD":
         TextEditingController _tecTextInput = TextEditingController();
@@ -210,7 +223,8 @@ class EditplusFormMaker {
             size: 14, text: formElement["TEXT"], weight: FontWeight.bold);
         break;
       case "DROPDOWN":
-        String valuesType = formElement["VALUES"].runtimeType.toString();
+        String valuesType =
+            formElement["VALUES"].runtimeType.toString().toUpperCase();
         List valuesList = ["EMPTY LIST"];
         if (valuesType == "STRING" &&
             formElement["VALUES"].toUpperCase() == "DYNAMIC") {
@@ -228,7 +242,10 @@ class EditplusFormMaker {
         break;
       case "BUTTON":
         returnWidget = OutlinedButton(
-            onPressed: callFunction, child: Text(formElement["LABEL"]));
+            onPressed: () {
+              callButtonFunction(formElement['NAME']);
+            },
+            child: Text(formElement["LABEL"]));
         break;
       default:
         returnWidget = EditPlusUiUtils.getBoldLabelText(
@@ -263,7 +280,13 @@ class EditplusFormMaker {
     return formStructure;
   }
 
-  void callFunction() {}
+  callButtonFunction(var buttonName) {
+    Function buttonFunction = functionBroker("GET_BUTTONFUNCTION");
+
+    if (buttonFunction != null) {
+      buttonFunction(buttonName);
+    }
+  }
 
   getFormValues() {
     var returnData = {};
